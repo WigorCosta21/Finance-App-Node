@@ -7,7 +7,8 @@
         "dev": "tsx watch src/server.ts",
         "lint": "eslint .",
         "lint:fix": "eslint . --fix",
-        "format:write": "prettier . --write"
+        "format:write": "prettier . --write",
+        "migrations:run": "npx tsx src/db/postgres/migrations/exec.ts"
     },
     "keywords": [],
     "author": "",

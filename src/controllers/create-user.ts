@@ -2,6 +2,7 @@ import type { Request } from 'express'
 import validator from 'validator'
 import { CreateUserUseCase } from '../useCases/create-user.js'
 import { badRequest, created, serverError } from './helper.js'
+import { EmailAlreadyInUseError } from '../errors/user.js'
 
 interface CreateUserBody {
     first_name: string
@@ -50,6 +51,12 @@ export class CreateUserController {
 
             return created(createdUser)
         } catch (error) {
+            if (error instanceof EmailAlreadyInUseError) {
+                return badRequest({
+                    message: error.message,
+                })
+            }
+
             console.error(error)
 
             return serverError()

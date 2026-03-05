@@ -4,7 +4,7 @@ export class GetUserByIdUseCase {
     async execute(userId: string) {
         const getUserByIdRepository = new PostgresGetUserByIdRepository()
 
-        const user = getUserByIdRepository.execute(userId)
+        const user = await getUserByIdRepository.execute(userId)
 
         return user
     }

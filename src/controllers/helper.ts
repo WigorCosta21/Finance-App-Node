@@ -20,3 +20,10 @@ export const serverError = () => {
         },
     }
 }
+
+export const ok = (body: unknown) => {
+    return {
+        statusCode: 200,
+        body,
+    }
+}

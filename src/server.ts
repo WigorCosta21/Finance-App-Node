@@ -10,6 +10,8 @@ import {
 import type { UserIdParams } from './types/user.js'
 import { GetUserByIdUseCase } from './useCases/get-user-by-id.js'
 import { PostgresGetUserByIdRepository } from './repositories/postgres/get-user-by-id.js'
+import { PostgresDeleteUserRepository } from './repositories/postgres/delete-user.js'
+import { DeleteUserUseCase } from './useCases/delete-user.js'
 
 const app = express()
 
@@ -55,7 +57,11 @@ app.patch(
 app.delete(
     '/api/users/:userId',
     async (request: Request<UserIdParams>, response: Response) => {
-        const deleteUserController = new DeleteUserController()
+        const deleteUserRepository = new PostgresDeleteUserRepository()
+
+        const deleteUserUseCase = new DeleteUserUseCase(deleteUserRepository)
+
+        const deleteUserController = new DeleteUserController(deleteUserUseCase)
 
         const { statusCode, body } = await deleteUserController.execute(request)
 

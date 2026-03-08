@@ -1,10 +1,16 @@
 import { PostgresHelper } from '../../db/postgres/helper.js'
-import type { CreateUserRepositoryParams } from '../../types/user.js'
+import type {
+    CreateUserRepositoryParams,
+    PublicUser,
+} from '../../types/user.js'
+import type { ICreateUserRepository } from '../interfaces/create-user.js'
 
-export class PostgresCreateUserRepository {
-    async execute(createUserParams: CreateUserRepositoryParams) {
+export class PostgresCreateUserRepository implements ICreateUserRepository {
+    async execute(
+        createUserParams: CreateUserRepositoryParams,
+    ): Promise<PublicUser> {
         await PostgresHelper.query(
-            'INSERT INTO users (id, first_name, last_name, email, password) VALUES ($1, $2, $3, $4, $5)',
+            'INSERT INTO users (id, first_name, last_name, email, password) VALUES ($1, $2, $3, $4, $5) RETURNING *',
             [
                 createUserParams.id,
                 createUserParams.first_name,

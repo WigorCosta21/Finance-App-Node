@@ -1,9 +1,9 @@
 import type { Request } from 'express'
-import validator from 'validator'
 import { badRequest, ok, serverError } from './helpers/http.js'
 import { UpdateUserUseCase } from '../useCases/update-user.js'
 import { EmailAlreadyInUseError } from '../errors/user.js'
 import {
+    checkIdIsValid,
     checkIfEmailIsValid,
     checkIfPasswordIsValid,
     emailIsAlreadyInUserResponse,
@@ -19,7 +19,7 @@ export class UpdateUserController {
         try {
             const userId = httpRequest.params.userId
 
-            const isIdValid = validator.isUUID(httpRequest.params.userId)
+            const isIdValid = checkIdIsValid(httpRequest.params.userId)
 
             if (!isIdValid) {
                 return invalidIdResponse()

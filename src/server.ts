@@ -3,7 +3,7 @@ import 'dotenv/config'
 import express, { type Request, type Response } from 'express'
 import { CreateUserController } from './controllers/create-user.js'
 import { GetUserByIdController } from './controllers/get-user-by-id.js'
-import { UpdateUserController } from './controllers/update.js'
+import { UpdateUserController } from './controllers/update-user.js'
 
 const app = express()
 

@@ -1,5 +1,4 @@
 import type { Request } from 'express'
-import { badRequest, ok, serverError } from './helpers/http.js'
 import { UpdateUserUseCase } from '../useCases/update-user.js'
 import { EmailAlreadyInUseError } from '../errors/user.js'
 import {
@@ -9,7 +8,10 @@ import {
     emailIsAlreadyInUserResponse,
     invalidIdResponse,
     invalidPasswordResponse,
-} from './helpers/user.js'
+    badRequest,
+    ok,
+    serverError,
+} from './helpers/index.js'
 import type { UpdateUserParams, UserIdParams } from '../types/user.js'
 
 export class UpdateUserController {

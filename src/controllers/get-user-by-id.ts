@@ -1,8 +1,13 @@
 import type { Request } from 'express'
 
 import { GetUserByIdUseCase } from '../useCases/get-user-by-id.js'
-import { notFound, ok, serverError } from './helpers/http.js'
-import { checkIdIsValid, invalidIdResponse } from './helpers/user.js'
+import {
+    checkIdIsValid,
+    invalidIdResponse,
+    notFound,
+    ok,
+    serverError,
+} from './helpers/index.js'
 import type { UserIdParams } from '../types/user.js'
 
 export class GetUserByIdController {

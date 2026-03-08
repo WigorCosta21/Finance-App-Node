@@ -11,6 +11,8 @@ import {
 import type { UserIdParams } from '../types/user.js'
 
 export class GetUserByIdController {
+    constructor(private getUserByIdUseCase: GetUserByIdUseCase) {}
+
     async execute(httpRequest: Request<UserIdParams>) {
         try {
             const isIdValid = checkIdIsValid(httpRequest.params.userId)
@@ -19,9 +21,7 @@ export class GetUserByIdController {
                 return invalidIdResponse()
             }
 
-            const getUserByIdUseCase = new GetUserByIdUseCase()
-
-            const user = await getUserByIdUseCase.execute(
+            const user = await this.getUserByIdUseCase.execute(
                 httpRequest.params.userId,
             )
 

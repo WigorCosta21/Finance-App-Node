@@ -5,11 +5,25 @@ import {
     UpdateUserController,
     GetUserByIdController,
     CreateUserController,
+    DeleteUserController,
 } from './controllers/index.js'
+import type { UserIdParams } from './types/user.js'
 
 const app = express()
 
 app.use(express.json())
+
+app.get(
+    '/api/users/:userId',
+    async (request: Request<UserIdParams>, response: Response) => {
+        const getUserByIDController = new GetUserByIdController()
+
+        const { statusCode, body } =
+            await getUserByIDController.execute(request)
+
+        return response.status(statusCode).json(body)
+    },
+)
 
 app.post('/api/users', async (request: Request, response: Response) => {
     const createUserController = new CreateUserController()
@@ -19,13 +33,9 @@ app.post('/api/users', async (request: Request, response: Response) => {
     response.status(statusCode).json(body)
 })
 
-interface UserParams {
-    userId: string
-}
-
 app.patch(
     '/api/users/:userId',
-    async (request: Request<UserParams>, response: Response) => {
+    async (request: Request<UserIdParams>, response: Response) => {
         const updateUserController = new UpdateUserController()
 
         const { statusCode, body } = await updateUserController.execute(request)
@@ -34,13 +44,12 @@ app.patch(
     },
 )
 
-app.get(
+app.delete(
     '/api/users/:userId',
-    async (request: Request<UserParams>, response: Response) => {
-        const getUserByIDController = new GetUserByIdController()
+    async (request: Request<UserIdParams>, response: Response) => {
+        const deleteUserController = new DeleteUserController()
 
-        const { statusCode, body } =
-            await getUserByIDController.execute(request)
+        const { statusCode, body } = await deleteUserController.execute(request)
 
         return response.status(statusCode).json(body)
     },

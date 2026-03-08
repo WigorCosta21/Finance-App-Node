@@ -1,5 +1,5 @@
 import validator from 'validator'
-import { badRequest } from './http.js'
+import { badRequest, notFound } from './http.js'
 
 export const invalidPasswordResponse = () => {
     return badRequest({
@@ -15,8 +15,12 @@ export const emailIsAlreadyInUserResponse = () => {
 
 export const invalidIdResponse = () => {
     return badRequest({
-        message: 'The provided is not valid',
+        message: 'The provided id is not valid',
     })
+}
+
+export const userNotFoundRespose = () => {
+    return notFound('User not found')
 }
 
 export const checkIfPasswordIsValid = (password: string) => {

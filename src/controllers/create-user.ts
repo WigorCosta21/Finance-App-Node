@@ -1,5 +1,5 @@
 import type { Request } from 'express'
-import { CreateUserUseCase } from '../useCases/create-user.js'
+import { CreateUserUseCase } from '../useCases/index.js'
 import { EmailAlreadyInUseError } from '../errors/user.js'
 import {
     checkIfEmailIsValid,

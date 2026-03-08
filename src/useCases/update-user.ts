@@ -1,8 +1,10 @@
 import bcrypt from 'bcrypt'
 
 import { EmailAlreadyInUseError } from '../errors/user.js'
-import { PostgresGetUserByEmailRepository } from '../repositories/postgres/get-user-by-email.js'
-import { PostgresUpdateUserRepository } from '../repositories/postgres/update-user.js'
+import {
+    PostgresUpdateUserRepository,
+    PostgresGetUserByEmailRepository,
+} from '../repositories/postgres/index.js'
 import type { UpdateUserParams } from '../types/user.js'
 
 export class UpdateUserUseCase {

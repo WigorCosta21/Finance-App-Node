@@ -1,6 +1,6 @@
 import type { Request } from 'express'
 
-import { GetUserByIdUseCase } from '../useCases/get-user-by-id.js'
+import { GetUserByIdUseCase } from '../useCases/index.js'
 import {
     checkIdIsValid,
     invalidIdResponse,

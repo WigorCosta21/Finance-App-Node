@@ -1,0 +1,19 @@
+export interface User {
+    id: string
+    first_name: string
+    last_name: string
+    email: string
+    password: string
+}
+
+export type CreateUserParams = Omit<User, 'id'>
+
+export type CreateUserRepositoryParams = User
+
+export type UpdateUserParams = Partial<Omit<User, 'id'>>
+
+export interface UserIdParams {
+    userId: string
+}
+
+export type PublicUser = Omit<User, 'password'>

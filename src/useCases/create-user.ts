@@ -3,16 +3,10 @@ import { v4 as uuidv4 } from 'uuid'
 import { PostgresCreateUserRepository } from '../repositories/postgres/create-user.js'
 import { PostgresGetUserByEmailRepository } from '../repositories/postgres/get-user-by-email.js'
 import { EmailAlreadyInUseError } from '../errors/user.js'
-
-interface ICreateUserUseCase {
-    first_name: string
-    last_name: string
-    email: string
-    password: string
-}
+import type { CreateUserParams } from '../types/user.js'
 
 export class CreateUserUseCase {
-    async execute(createUserParams: ICreateUserUseCase) {
+    async execute(createUserParams: CreateUserParams) {
         const postgresGetUserByEmailRepository =
             new PostgresGetUserByEmailRepository()
 

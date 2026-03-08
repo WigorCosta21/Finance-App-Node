@@ -1,19 +1,13 @@
 import { PostgresHelper } from '../../db/postgres/helper.js'
-
-interface IUpdateUserParams {
-    first_name?: string
-    last_name?: string
-    email?: string
-    password?: string
-}
+import type { UpdateUserParams } from '../../types/user.js'
 
 export class PostgresUpdateUserRepository {
-    async execute(userId: string, updateParams: IUpdateUserParams) {
+    async execute(userId: string, updateParams: UpdateUserParams) {
         const updateFields: string[] = []
         const updateValues: unknown[] = []
 
         Object.keys(updateParams).forEach((key) => {
-            const value = updateParams[key as keyof IUpdateUserParams]
+            const value = updateParams[key as keyof UpdateUserParams]
 
             if (value !== undefined) {
                 updateFields.push(`${key} = $${updateValues.length + 1}`)

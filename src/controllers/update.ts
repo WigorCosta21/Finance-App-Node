@@ -1,23 +1,20 @@
 import type { Request } from 'express'
 import validator from 'validator'
-import { badRequest, ok, serverError } from './helper.js'
+import { badRequest, ok, serverError } from './helpers/http.js'
 import { UpdateUserUseCase } from '../useCases/update-user.js'
 import { EmailAlreadyInUseError } from '../errors/user.js'
-
-interface IUpdateUserParams {
-    userId: string
-}
-
-interface IUpdateUserBody {
-    first_name?: string
-    last_name?: string
-    email?: string
-    password?: string
-}
+import {
+    checkIfEmailIsValid,
+    checkIfPasswordIsValid,
+    emailIsAlreadyInUserResponse,
+    invalidIdResponse,
+    invalidPasswordResponse,
+} from './helpers/user.js'
+import type { UpdateUserParams, UserIdParams } from '../types/user.js'
 
 export class UpdateUserController {
     async execute(
-        httpRequest: Request<IUpdateUserParams, unknown, IUpdateUserBody>,
+        httpRequest: Request<UserIdParams, unknown, UpdateUserParams>,
     ) {
         try {
             const userId = httpRequest.params.userId
@@ -25,56 +22,46 @@ export class UpdateUserController {
             const isIdValid = validator.isUUID(httpRequest.params.userId)
 
             if (!isIdValid) {
-                return badRequest({
-                    message: 'The provided is not valid',
-                })
+                return invalidIdResponse()
             }
 
-            const updatedUserParams = httpRequest.body
+            const params = httpRequest.body
 
-            const allowedFields: (keyof IUpdateUserBody)[] = [
+            const allowedFields: (keyof UpdateUserParams)[] = [
                 'first_name',
                 'last_name',
                 'email',
                 'password',
             ]
 
-            const someFieldIsNotAllowed = Object.keys(updatedUserParams).some(
+            const someFieldIsNotAllowed = Object.keys(params).some(
                 (field) =>
-                    !allowedFields.includes(field as keyof IUpdateUserBody),
+                    !allowedFields.includes(field as keyof UpdateUserParams),
             )
 
             if (someFieldIsNotAllowed) {
                 return badRequest('Some provided field is not allowed.')
             }
 
-            if (updatedUserParams.password) {
-                const passwordIsNotValid =
-                    updatedUserParams.password?.length < 6
+            if (params.password) {
+                const passwordIsValid = checkIfPasswordIsValid(params.password)
 
-                if (passwordIsNotValid) {
-                    return badRequest({
-                        message: 'Password must be at least 6 characters',
-                    })
+                if (!passwordIsValid) {
+                    return invalidPasswordResponse()
                 }
             }
 
-            if (updatedUserParams.email) {
-                const emailIsValid = validator.isEmail(updatedUserParams.email)
+            if (params.email) {
+                const emailIsValid = checkIfEmailIsValid(params.email)
 
                 if (!emailIsValid) {
-                    return badRequest({
-                        message: 'Invalid e-mail. Please provide a valid one.',
-                    })
+                    return emailIsAlreadyInUserResponse()
                 }
             }
 
             const updateUserCase = new UpdateUserUseCase()
 
-            const updatedUser = await updateUserCase.execute(
-                userId,
-                updatedUserParams,
-            )
+            const updatedUser = await updateUserCase.execute(userId, params)
 
             return ok(updatedUser)
         } catch (error) {

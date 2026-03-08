@@ -1,22 +1,21 @@
 import type { Request } from 'express'
-import validator from 'validator'
 import { CreateUserUseCase } from '../useCases/create-user.js'
-import { badRequest, created, serverError } from './helper.js'
+import { badRequest, created, serverError } from './helpers/http.js'
 import { EmailAlreadyInUseError } from '../errors/user.js'
-
-interface CreateUserBody {
-    first_name: string
-    last_name: string
-    email: string
-    password: string
-}
+import {
+    checkIfEmailIsValid,
+    checkIfPasswordIsValid,
+    emailIsAlreadyInUserResponse,
+    invalidPasswordResponse,
+} from './helpers/user.js'
+import type { CreateUserParams } from '../types/user.js'
 
 export class CreateUserController {
-    async execute(httpRequest: Request<unknown, unknown, CreateUserBody>) {
+    async execute(httpRequest: Request<unknown, unknown, CreateUserParams>) {
         try {
             const params = httpRequest.body
 
-            const requiredFields: (keyof CreateUserBody)[] = [
+            const requiredFields: (keyof CreateUserParams)[] = [
                 'first_name',
                 'last_name',
                 'email',
@@ -29,20 +28,16 @@ export class CreateUserController {
                 }
             }
 
-            const passwordIsNotValid = params.password.length < 6
+            const passwordIsValid = checkIfPasswordIsValid(params.password)
 
-            if (passwordIsNotValid) {
-                return badRequest({
-                    message: 'Password must be at least 6 characters',
-                })
+            if (!passwordIsValid) {
+                return invalidPasswordResponse()
             }
 
-            const emailIsValid = validator.isEmail(params.email)
+            const emailIsValid = checkIfEmailIsValid(params.email)
 
             if (!emailIsValid) {
-                return badRequest({
-                    message: 'Invalid e-mail. Please provide a valid one.',
-                })
+                return emailIsAlreadyInUserResponse()
             }
 
             const createUserUseCase = new CreateUserUseCase()

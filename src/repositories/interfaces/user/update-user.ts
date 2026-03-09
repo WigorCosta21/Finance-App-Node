@@ -1,4 +1,4 @@
-import type { PublicUser, UpdateUserParams } from '../../types/user.js'
+import type { PublicUser, UpdateUserParams } from '../../../types/user.js'
 
 export interface IUpdateUserRepository {
     execute(

@@ -9,4 +9,5 @@ export interface Transaction {
     type: TransactionType
 }
 
+export type CreateTransactionParams = Omit<Transaction, 'id'>
 export type CreateTransactionRepositoryParams = Transaction

@@ -1,4 +1,4 @@
-import type { IGetUserByIdRepository } from '../repositories/interfaces/user/get-user-by-id.js'
+import type { IGetUserByIdRepository } from '../../repositories/interfaces/user/get-user-by-id.js'
 
 export class GetUserByIdUseCase {
     constructor(private getUserByIdRepository: IGetUserByIdRepository) {}

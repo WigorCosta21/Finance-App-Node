@@ -1,9 +1,9 @@
 import bcrypt from 'bcrypt'
 
-import { EmailAlreadyInUseError } from '../errors/user.js'
-import type { UpdateUserParams } from '../types/user.js'
-import type { IUpdateUserRepository } from '../repositories/interfaces/user/update-user.js'
-import type { IGetUserByEmailRepository } from '../repositories/interfaces/user/get-user-by-email.js'
+import { EmailAlreadyInUseError } from '../../errors/user.js'
+import type { UpdateUserParams } from '../../types/user.js'
+import type { IUpdateUserRepository } from '../../repositories/interfaces/user/update-user.js'
+import type { IGetUserByEmailRepository } from '../../repositories/interfaces/user/get-user-by-email.js'
 
 export class UpdateUserUseCase {
     constructor(

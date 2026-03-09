@@ -1,12 +1,12 @@
 import type { Request } from 'express'
-import { ok, serverError } from './helpers/http.js'
-import type { UserIdParams } from '../types/user.js'
+import { ok, serverError } from './../helpers/http.js'
+import type { UserIdParams } from '../../types/user.js'
 import {
     checkIdIsValid,
     invalidIdResponse,
     userNotFoundRespose,
-} from './helpers/user.js'
-import { DeleteUserUseCase } from '../useCases/index.js'
+} from './../helpers/user.js'
+import { DeleteUserUseCase } from '../../useCases/index.js'
 
 export class DeleteUserController {
     constructor(private deleteUserUseCase: DeleteUserUseCase) {}

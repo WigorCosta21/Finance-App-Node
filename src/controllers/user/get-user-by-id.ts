@@ -1,14 +1,14 @@
 import type { Request } from 'express'
 
-import { GetUserByIdUseCase } from '../useCases/index.js'
+import { GetUserByIdUseCase } from '../../useCases/index.js'
 import {
     checkIdIsValid,
     invalidIdResponse,
     ok,
     serverError,
     userNotFoundRespose,
-} from './helpers/index.js'
-import type { UserIdParams } from '../types/user.js'
+} from '../helpers/index.js'
+import type { UserIdParams } from '../../types/user.js'
 
 export class GetUserByIdController {
     constructor(private getUserByIdUseCase: GetUserByIdUseCase) {}

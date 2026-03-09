@@ -1,6 +1,6 @@
 import type { Request } from 'express'
-import { CreateUserUseCase } from '../useCases/index.js'
-import { EmailAlreadyInUseError } from '../errors/user.js'
+import { CreateUserUseCase } from '../../useCases/index.js'
+import { EmailAlreadyInUseError } from '../../errors/user.js'
 import {
     checkIfEmailIsValid,
     checkIfPasswordIsValid,
@@ -9,9 +9,9 @@ import {
     badRequest,
     created,
     serverError,
-} from './helpers/index.js'
+} from '../helpers/index.js'
 
-import type { CreateUserParams } from '../types/user.js'
+import type { CreateUserParams } from '../../types/user.js'
 
 export class CreateUserController {
     constructor(private createUserUseCase: CreateUserUseCase) {}

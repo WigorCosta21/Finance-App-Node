@@ -1,6 +1,6 @@
 import type { Request } from 'express'
-import { UpdateUserUseCase } from '../useCases/index.js'
-import { EmailAlreadyInUseError } from '../errors/user.js'
+import { UpdateUserUseCase } from '../../useCases/index.js'
+import { EmailAlreadyInUseError } from '../../errors/user.js'
 import {
     checkIdIsValid,
     checkIfEmailIsValid,
@@ -11,8 +11,8 @@ import {
     badRequest,
     ok,
     serverError,
-} from './helpers/index.js'
-import type { UpdateUserParams, UserIdParams } from '../types/user.js'
+} from './../helpers/index.js'
+import type { UpdateUserParams, UserIdParams } from '../../types/user.js'
 
 export class UpdateUserController {
     constructor(private updateUserUseCase: UpdateUserUseCase) {}

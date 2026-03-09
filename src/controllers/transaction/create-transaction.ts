@@ -24,13 +24,10 @@ export class CreateTransactionController {
             ]
 
             for (const field of requiredFields) {
-                const value = params[field]
-
-                if (value === undefined || value === null) {
-                    return badRequest({ message: `Missing param: ${field}` })
-                }
-
-                if (typeof value === 'string' && value.trim().length === 0) {
+                if (
+                    !params[field] ||
+                    params[field].toString().trim().length === 0
+                ) {
                     return badRequest({ message: `Missing param: ${field}` })
                 }
             }

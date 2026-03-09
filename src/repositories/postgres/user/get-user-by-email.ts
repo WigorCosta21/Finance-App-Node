@@ -1,5 +1,5 @@
-import { PostgresHelper } from '../../db/postgres/helper.js'
-import type { IGetUserByEmailRepository } from '../interfaces/get-user-by-email.js'
+import { PostgresHelper } from '../../../db/postgres/helper.js'
+import type { IGetUserByEmailRepository } from '../../interfaces/user/get-user-by-email.js'
 
 export class PostgresGetUserByEmailRepository implements IGetUserByEmailRepository {
     async execute(email: string) {

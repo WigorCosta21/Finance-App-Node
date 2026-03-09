@@ -1,6 +1,6 @@
-import { PostgresHelper } from '../../db/postgres/helper.js'
-import type { UpdateUserParams } from '../../types/user.js'
-import type { IUpdateUserRepository } from '../interfaces/update-user.js'
+import { PostgresHelper } from '../../../db/postgres/helper.js'
+import type { UpdateUserParams } from '../../../types/user.js'
+import type { IUpdateUserRepository } from '../../interfaces/user/update-user.js'
 
 export class PostgresUpdateUserRepository implements IUpdateUserRepository {
     async execute(userId: string, updateParams: UpdateUserParams) {

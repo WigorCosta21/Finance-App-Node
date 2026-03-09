@@ -2,8 +2,8 @@ import bcrypt from 'bcrypt'
 import { v4 as uuidv4 } from 'uuid'
 import { EmailAlreadyInUseError } from '../errors/user.js'
 import type { CreateUserParams } from '../types/user.js'
-import type { ICreateUserRepository } from '../repositories/interfaces/create-user.js'
-import type { IGetUserByEmailRepository } from '../repositories/interfaces/get-user-by-email.js'
+import type { ICreateUserRepository } from '../repositories/interfaces/user/create-user.js'
+import type { IGetUserByEmailRepository } from '../repositories/interfaces/user/get-user-by-email.js'
 
 export class CreateUserUseCase {
     constructor(

@@ -1,9 +1,9 @@
-import { PostgresHelper } from '../../db/postgres/helper.js'
+import { PostgresHelper } from '../../../db/postgres/helper.js'
 import type {
     CreateUserRepositoryParams,
     PublicUser,
-} from '../../types/user.js'
-import type { ICreateUserRepository } from '../interfaces/create-user.js'
+} from '../../../types/user.js'
+import type { ICreateUserRepository } from '../../interfaces/user/create-user.js'
 
 export class PostgresCreateUserRepository implements ICreateUserRepository {
     async execute(

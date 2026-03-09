@@ -1,6 +1,6 @@
-import { PostgresHelper } from '../../db/postgres/helper.js'
-import type { PublicUser } from '../../types/user.js'
-import type { IDeleteUserRepository } from '../interfaces/delete-user.js'
+import { PostgresHelper } from '../../../db/postgres/helper.js'
+import type { PublicUser } from '../../../types/user.js'
+import type { IDeleteUserRepository } from '../../interfaces/user/delete-user.js'
 
 export class PostgresDeleteUserRepository implements IDeleteUserRepository {
     async execute(userId: string): Promise<PublicUser | null> {

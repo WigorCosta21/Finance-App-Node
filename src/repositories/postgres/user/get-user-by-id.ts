@@ -5,7 +5,7 @@ import type { IGetUserByIdRepository } from '../../interfaces/user/get-user-by-i
 export class PostgresGetUserByIdRepository implements IGetUserByIdRepository {
     async execute(userId: string): Promise<PublicUser | null> {
         const user = await PostgresHelper.query(
-            'SELECT * FROM users WHERE id = $1',
+            'SELECT id, first_name, last_name, email FROM users WHERE id = $1',
             [userId],
         )
 

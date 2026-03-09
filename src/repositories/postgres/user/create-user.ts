@@ -9,8 +9,8 @@ export class PostgresCreateUserRepository implements ICreateUserRepository {
     async execute(
         createUserParams: CreateUserRepositoryParams,
     ): Promise<PublicUser> {
-        await PostgresHelper.query(
-            'INSERT INTO users (id, first_name, last_name, email, password) VALUES ($1, $2, $3, $4, $5) RETURNING *',
+        const createdUser = await PostgresHelper.query(
+            'INSERT INTO users (id, first_name, last_name, email, password) VALUES ($1, $2, $3, $4, $5) RETURNING  id, first_name, last_name, email',
             [
                 createUserParams.id,
                 createUserParams.first_name,
@@ -18,11 +18,6 @@ export class PostgresCreateUserRepository implements ICreateUserRepository {
                 createUserParams.email,
                 createUserParams.password,
             ],
-        )
-
-        const createdUser = await PostgresHelper.query(
-            'SELECT * FROM users WHERE id = $1',
-            [createUserParams.id],
         )
 
         return createdUser[0]

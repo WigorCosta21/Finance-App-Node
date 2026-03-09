@@ -1,7 +1,8 @@
 import { PostgresHelper } from '../../db/postgres/helper.js'
 import type { UpdateUserParams } from '../../types/user.js'
+import type { IUpdateUserRepository } from '../interfaces/update-user.js'
 
-export class PostgresUpdateUserRepository {
+export class PostgresUpdateUserRepository implements IUpdateUserRepository {
     async execute(userId: string, updateParams: UpdateUserParams) {
         const updateFields: string[] = []
         const updateValues: unknown[] = []
@@ -21,11 +22,11 @@ export class PostgresUpdateUserRepository {
             UPDATE users
             SET ${updateFields.join(',')}
             WHERE id = $${updateValues.length}
-            RETURNING *
+            RETURNING id, first_name, last_name, email
         `
 
         const updateUser = await PostgresHelper.query(updateQuery, updateValues)
 
-        return updateUser[0]
+        return updateUser[0] ?? null
     }
 }

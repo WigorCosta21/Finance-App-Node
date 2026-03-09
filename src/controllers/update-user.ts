@@ -15,6 +15,7 @@ import {
 import type { UpdateUserParams, UserIdParams } from '../types/user.js'
 
 export class UpdateUserController {
+    constructor(private updateUserUseCase: UpdateUserUseCase) {}
     async execute(
         httpRequest: Request<UserIdParams, unknown, UpdateUserParams>,
     ) {
@@ -61,9 +62,10 @@ export class UpdateUserController {
                 }
             }
 
-            const updateUserCase = new UpdateUserUseCase()
-
-            const updatedUser = await updateUserCase.execute(userId, params)
+            const updatedUser = await this.updateUserUseCase.execute(
+                userId,
+                params,
+            )
 
             return ok(updatedUser)
         } catch (error) {

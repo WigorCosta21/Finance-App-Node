@@ -11,6 +11,11 @@ export const invalidIdResponse = () => {
     })
 }
 
+export const requiredFieldIsMissing = (field: string) => {
+    return badRequest({
+        message: `The field ${field} is required.`,
+    })
+}
 export const validateRequiredFields = <T extends object>(
     params: T,
     requiredFields: (keyof T)[],

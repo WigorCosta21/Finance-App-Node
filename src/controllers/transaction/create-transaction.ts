@@ -7,6 +7,7 @@ import type { CreateTransactionUseCase } from '../../useCases/transaction/create
 import {
     checkIdIsValid,
     invalidIdResponse,
+    requiredFieldIsMissing,
     validateRequiredFields,
 } from '../helpers/index.js'
 
@@ -29,22 +30,14 @@ export class CreateTransactionController {
             const { ok: requiredFieldWereProvided, missingField } =
                 validateRequiredFields(params, requiredFields)
 
-            if (!requiredFieldWereProvided) {
-                return badRequest({
-                    message: `The field ${missingField} is required.`,
-                })
+            if (!requiredFieldWereProvided && missingField) {
+                return requiredFieldIsMissing(missingField)
             }
 
             const userIdValid = checkIdIsValid(params.user_id)
 
             if (!userIdValid) {
                 return invalidIdResponse()
-            }
-
-            if (params.amount <= 0) {
-                return badRequest({
-                    message: 'The amount must be grater than 0.',
-                })
             }
 
             const amoutIsValid = validator.isCurrency(

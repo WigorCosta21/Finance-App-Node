@@ -5,7 +5,7 @@ import {
     checkIdIsValid,
     invalidIdResponse,
     userNotFoundRespose,
-} from './../helpers/user.js'
+} from './../helpers/index.js'
 import { DeleteUserUseCase } from '../../useCases/index.js'
 
 export class DeleteUserController {

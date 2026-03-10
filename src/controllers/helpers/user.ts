@@ -13,12 +13,6 @@ export const emailIsAlreadyInUserResponse = () => {
     })
 }
 
-export const invalidIdResponse = () => {
-    return badRequest({
-        message: 'The provided id is not valid',
-    })
-}
-
 export const userNotFoundRespose = () => {
     return notFound('User not found')
 }
@@ -29,8 +23,4 @@ export const checkIfPasswordIsValid = (password: string) => {
 
 export const checkIfEmailIsValid = (email: string) => {
     return validator.isEmail(email)
-}
-
-export const checkIdIsValid = (id: string) => {
-    return validator.isUUID(id)
 }

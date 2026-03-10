@@ -4,7 +4,7 @@ import validator from 'validator'
 import type { CreateTransactionParams } from '../../types/transaction.js'
 import { badRequest, created, serverError } from '../helpers/http.js'
 import type { CreateTransactionUseCase } from '../../useCases/transaction/create-transaction.js'
-import { checkIdIsValid, invalidIdResponse } from '../helpers/user.js'
+import { checkIdIsValid, invalidIdResponse } from '../helpers/index.js'
 
 export class CreateTransactionController {
     constructor(private createTransactionUseCase: CreateTransactionUseCase) {}

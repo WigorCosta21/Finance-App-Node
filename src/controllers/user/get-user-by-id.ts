@@ -2,7 +2,7 @@ import type { Request } from 'express'
 
 import { GetUserByIdUseCase } from '../../useCases/index.js'
 import {
-    checkIdIsValid,
+    checkIfIdIsValid,
     invalidIdResponse,
     ok,
     serverError,
@@ -15,7 +15,7 @@ export class GetUserByIdController {
 
     async execute(httpRequest: Request<UserIdParams>) {
         try {
-            const isIdValid = checkIdIsValid(httpRequest.params.userId)
+            const isIdValid = checkIfIdIsValid(httpRequest.params.userId)
 
             if (!isIdValid) {
                 return invalidIdResponse()

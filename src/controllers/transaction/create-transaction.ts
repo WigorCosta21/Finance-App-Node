@@ -3,7 +3,7 @@ import type { CreateTransactionParams } from '../../types/transaction.js'
 import { created, serverError } from '../helpers/http.js'
 import type { CreateTransactionUseCase } from '../../useCases/transaction/create-transaction.js'
 import {
-    checkIdIsValid,
+    checkIfIdIsValid,
     invalidIdResponse,
     requiredFieldIsMissing,
     validateRequiredFields,
@@ -38,7 +38,7 @@ export class CreateTransactionController {
                 return requiredFieldIsMissing(missingField)
             }
 
-            const userIdValid = checkIdIsValid(params.user_id)
+            const userIdValid = checkIfIdIsValid(params.user_id)
 
             if (!userIdValid) {
                 return invalidIdResponse()

@@ -2,7 +2,7 @@ import type { Request } from 'express'
 import { UpdateUserUseCase } from '../../useCases/index.js'
 import { EmailAlreadyInUseError } from '../../errors/user.js'
 import {
-    checkIdIsValid,
+    checkIfIdIsValid,
     checkIfEmailIsValid,
     checkIfPasswordIsValid,
     emailIsAlreadyInUserResponse,
@@ -22,7 +22,7 @@ export class UpdateUserController {
         try {
             const userId = httpRequest.params.userId
 
-            const isIdValid = checkIdIsValid(httpRequest.params.userId)
+            const isIdValid = checkIfIdIsValid(httpRequest.params.userId)
 
             if (!isIdValid) {
                 return invalidIdResponse()

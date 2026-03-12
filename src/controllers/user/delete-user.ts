@@ -2,7 +2,7 @@ import type { Request } from 'express'
 import { ok, serverError } from './../helpers/http.js'
 import type { UserIdParams } from '../../types/user.js'
 import {
-    checkIdIsValid,
+    checkIfIdIsValid,
     invalidIdResponse,
     userNotFoundRespose,
 } from './../helpers/index.js'
@@ -15,7 +15,7 @@ export class DeleteUserController {
         try {
             const userId = httpRequest.params.userId
 
-            const idIsValid = checkIdIsValid(userId)
+            const idIsValid = checkIfIdIsValid(userId)
 
             if (!idIsValid) {
                 return invalidIdResponse()

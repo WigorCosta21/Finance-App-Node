@@ -1,7 +1,7 @@
 import validator from 'validator'
 import { badRequest } from './http.js'
 
-export const checkIdIsValid = (id: string) => {
+export const checkIfIdIsValid = (id: string) => {
     return validator.isUUID(id)
 }
 

@@ -16,4 +16,8 @@ export interface UserIdParams {
     userId: string
 }
 
+export interface UserIdQuery {
+    userId: string
+}
+
 export type PublicUser = Omit<User, 'password'>

@@ -1,14 +1,17 @@
 import 'dotenv/config'
 
 import express, { type Request, type Response } from 'express'
-import type { UserIdParams } from './types/user.js'
+import type { UserIdParams, UserIdQuery } from './types/user.js'
 import {
     makeCreateUserController,
     makeDeleteUserController,
     makeGetUserByIdController,
     makeUpdateUserController,
 } from './factories/controllers/user.js'
-import { makeCreateTransactionController } from './factories/controllers/transaction.js'
+import {
+    makeCreateTransactionController,
+    makeGetTransactiosByUserIdController,
+} from './factories/controllers/transaction.js'
 
 const app = express()
 
@@ -51,6 +54,22 @@ app.delete(
         const deleteUserController = makeDeleteUserController()
 
         const { statusCode, body } = await deleteUserController.execute(request)
+
+        return response.status(statusCode).json(body)
+    },
+)
+
+app.get(
+    '/api/transactions',
+    async (
+        request: Request<unknown, unknown, unknown, UserIdQuery>,
+        response: Response,
+    ) => {
+        const getTransactionsByUserIdController =
+            makeGetTransactiosByUserIdController()
+
+        const { statusCode, body } =
+            await getTransactionsByUserIdController.execute(request)
 
         return response.status(statusCode).json(body)
     },

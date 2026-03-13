@@ -10,7 +10,7 @@ import {
 } from '../helpers/transaction.js'
 import type { UpdateTransactionUseCase } from '../../useCases/index.js'
 
-interface ITransactionIdParams {
+export interface ITransactionIdParams {
     transactionId: string
 }
 

@@ -11,7 +11,10 @@ import {
 import {
     makeCreateTransactionController,
     makeGetTransactiosByUserIdController,
+    makeUpdateTransactionController,
 } from './factories/controllers/transaction.js'
+import type { ITransactionIdParams } from './controllers/index.js'
+import type { UpdateTransactionParams } from './types/transaction.js'
 
 const app = express()
 
@@ -83,6 +86,25 @@ app.post('/api/transactions', async (request: Request, response: Response) => {
 
     response.status(statusCode).json(body)
 })
+
+app.patch(
+    '/api/transactions/:transactionId',
+    async (
+        request: Request<
+            ITransactionIdParams,
+            unknown,
+            UpdateTransactionParams
+        >,
+        response: Response,
+    ) => {
+        const updateTransactionController = makeUpdateTransactionController()
+
+        const { statusCode, body } =
+            await updateTransactionController.execute(request)
+
+        return response.status(statusCode).json(body)
+    },
+)
 
 app.listen(process.env.PORT, () =>
     console.log(`Listening on port ${process.env.PORT}`),

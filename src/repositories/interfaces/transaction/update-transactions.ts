@@ -1,8 +1,11 @@
-import type { Transaction } from '../../../types/transaction.js'
+import type {
+    Transaction,
+    UpdateTransactionParams,
+} from '../../../types/transaction.js'
 
 export interface IUpdateTransactionRepository {
     execute(
         transactionId: string,
-        updateTransactionsParams: Transaction,
+        updateTransactionsParams: UpdateTransactionParams,
     ): Promise<Transaction | null>
 }

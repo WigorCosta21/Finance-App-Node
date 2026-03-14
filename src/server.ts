@@ -5,6 +5,7 @@ import type { UserIdParams, UserIdQuery } from './types/user.js'
 import {
     makeCreateUserController,
     makeDeleteUserController,
+    makeGetUserBalanceController,
     makeGetUserByIdController,
     makeUpdateUserController,
 } from './factories/controllers/user.js'
@@ -31,6 +32,18 @@ app.get(
 
         const { statusCode, body } =
             await getUserByIdController.execute(request)
+
+        return response.status(statusCode).json(body)
+    },
+)
+
+app.get(
+    '/api/users/:userId/balance',
+    async (request: Request<UserIdParams>, response: Response) => {
+        const getUserBalanceController = makeGetUserBalanceController()
+
+        const { statusCode, body } =
+            await getUserBalanceController.execute(request)
 
         return response.status(statusCode).json(body)
     },

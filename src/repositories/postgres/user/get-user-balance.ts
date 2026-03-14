@@ -1,7 +1,7 @@
 import { PostgresHelper } from '../../../db/postgres/helper.js'
 import type { IGetUserBalanceRepository } from '../../interfaces/user/get-user-balance.js'
 
-export class PostgresGetUserBalaceRepository implements IGetUserBalanceRepository {
+export class PostgresGetUserBalanceRepository implements IGetUserBalanceRepository {
     async execute(userId: string) {
         const balance = await PostgresHelper.query(
             `SELECT

@@ -1,5 +1,5 @@
 import validator from 'validator'
-import { badRequest } from './http.js'
+import { badRequest, notFound } from './http.js'
 
 export const checkIfAmountIsValid = (amount: number) => {
     if (typeof amount !== 'number') {
@@ -27,4 +27,8 @@ export const invalidTypeResponse = () => {
     return badRequest({
         message: 'The type must be EARNING, EXPENSE, INVESTMENT',
     })
+}
+
+export const transactionNotFoundRespose = () => {
+    return notFound('Transaction not found')
 }

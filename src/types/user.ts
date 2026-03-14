@@ -21,3 +21,10 @@ export interface UserIdQuery {
 }
 
 export type PublicUser = Omit<User, 'password'>
+
+export interface UserBalance {
+    earnings: number
+    expenses: number
+    investment: number
+    balance: number
+}

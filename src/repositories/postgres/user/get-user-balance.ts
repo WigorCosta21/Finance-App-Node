@@ -4,17 +4,7 @@ import type { IGetUserBalanceRepository } from '../../interfaces/user/get-user-b
 export class PostgresGetUserBalanceRepository implements IGetUserBalanceRepository {
     async execute(userId: string) {
         const balance = await PostgresHelper.query(
-            `SELECT
-                SUM(CASE WHEN type = 'EARNING' THEN amount ELSE 0 END) AS earnings,
-                SUM(CASE WHEN type = 'EXPENSE' THEN amount ELSE 0 END) AS expenses,
-                SUM(CASE WHEN type = 'INVESTMENT' THEN amount ELSE 0 END) AS investment,
-                (
-                    SUM(CASE WHEN type = 'EARNING' THEN amount ELSE 0 END)
-                    -SUM(CASE WHEN type = 'EXPENSE' THEN amount ELSE 0 END)
-                    -SUM(CASE WHEN type = 'INVESTMENT' THEN amount ELSE 0 END)
-                ) AS balance
-            FROM transactions
-            WHERE user_id = $1;`,
+            `SELECT * FROM get_user_balance($1)`,
             [userId],
         )
 

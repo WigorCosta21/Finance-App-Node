@@ -1,0 +1,22 @@
+import { UserNotFoundError } from '../../errors/user.js'
+import type { IGetUserBalanceRepository } from '../../repositories/interfaces/user/get-user-balance.js'
+import type { IGetUserByIdRepository } from '../../repositories/interfaces/user/get-user-by-id.js'
+
+export class GetUserBalanceUseCase {
+    constructor(
+        private getUserBalanceRepository: IGetUserBalanceRepository,
+        private getUserByIdRepository: IGetUserByIdRepository,
+    ) {}
+
+    async execute(userId: string) {
+        const user = await this.getUserByIdRepository.execute(userId)
+
+        if (!user) {
+            throw new UserNotFoundError(userId)
+        }
+
+        const balance = await this.getUserBalanceRepository.execute(userId)
+
+        return balance
+    }
+}

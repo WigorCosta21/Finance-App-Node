@@ -1,14 +1,22 @@
-import { PostgresHelper } from '../../../db/postgres/helper.js'
+import { prisma } from '../../../../prisma/prisma.js'
 import type { Transaction } from '../../../types/transaction.js'
 import type { IDeleteTransactionRepository } from '../../interfaces/transaction/delete-transaction.js'
 
 export class PostgresDeleteTransactionReposiroty implements IDeleteTransactionRepository {
     async execute(transactionId: string): Promise<Transaction | null> {
-        const transaction = await PostgresHelper.query(
-            'DELETE FROM transactions WHERE id = $1 RETURNING *',
-            [transactionId],
-        )
+        try {
+            const transaction = await prisma.transaction.delete({
+                where: {
+                    id: transactionId,
+                },
+            })
 
-        return transaction[0] ?? null
+            return {
+                ...transaction,
+                amount: transaction.amount.toNumber(),
+            }
+        } catch {
+            return null
+        }
     }
 }

@@ -4,7 +4,7 @@ export interface Transaction {
     id: string
     user_id: string
     name: string
-    date: string
+    date: Date
     amount: number
     type: TransactionType
 }

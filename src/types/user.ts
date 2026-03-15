@@ -25,6 +25,6 @@ export type PublicUser = Omit<User, 'password'>
 export interface UserBalance {
     earnings: number
     expenses: number
-    investment: number
+    investments: number
     balance: number
 }

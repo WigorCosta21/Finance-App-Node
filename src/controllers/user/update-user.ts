@@ -3,16 +3,14 @@ import { UpdateUserUseCase } from '../../useCases/index.js'
 import { EmailAlreadyInUseError } from '../../errors/user.js'
 import {
     checkIfIdIsValid,
-    checkIfEmailIsValid,
-    checkIfPasswordIsValid,
-    emailIsAlreadyInUserResponse,
     invalidIdResponse,
-    invalidPasswordResponse,
     badRequest,
     ok,
     serverError,
 } from './../helpers/index.js'
 import type { UpdateUserParams, UserIdParams } from '../../types/user.js'
+import { updateUserSchema } from '../../schemas/user.js'
+import { ZodError } from 'zod'
 
 export class UpdateUserController {
     constructor(private updateUserUseCase: UpdateUserUseCase) {}
@@ -30,37 +28,7 @@ export class UpdateUserController {
 
             const params = httpRequest.body
 
-            const allowedFields: (keyof UpdateUserParams)[] = [
-                'first_name',
-                'last_name',
-                'email',
-                'password',
-            ]
-
-            const someFieldIsNotAllowed = Object.keys(params).some(
-                (field) =>
-                    !allowedFields.includes(field as keyof UpdateUserParams),
-            )
-
-            if (someFieldIsNotAllowed) {
-                return badRequest('Some provided field is not allowed.')
-            }
-
-            if (params.password) {
-                const passwordIsValid = checkIfPasswordIsValid(params.password)
-
-                if (!passwordIsValid) {
-                    return invalidPasswordResponse()
-                }
-            }
-
-            if (params.email) {
-                const emailIsValid = checkIfEmailIsValid(params.email)
-
-                if (!emailIsValid) {
-                    return emailIsAlreadyInUserResponse()
-                }
-            }
+            await updateUserSchema.parseAsync(params)
 
             const updatedUser = await this.updateUserUseCase.execute(
                 userId,
@@ -69,6 +37,18 @@ export class UpdateUserController {
 
             return ok(updatedUser)
         } catch (error) {
+            if (error instanceof ZodError) {
+                return badRequest({
+                    message: error.issues.map((issue) => ({
+                        field: issue.path.join('.') || 'body',
+                        message:
+                            issue.code === 'unrecognized_keys'
+                                ? 'Some provided field is not allowed'
+                                : issue.message,
+                    })),
+                })
+            }
+
             if (error instanceof EmailAlreadyInUseError) {
                 return badRequest({ error: error.message })
             }

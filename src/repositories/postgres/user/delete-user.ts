@@ -1,14 +1,33 @@
-import { PostgresHelper } from '../../../db/postgres/helper.js'
+import { Prisma } from '../../../../generated/prisma/client.js'
+import { prisma } from '../../../../prisma/prisma.js'
 import type { PublicUser } from '../../../types/user.js'
 import type { IDeleteUserRepository } from '../../interfaces/user/delete-user.js'
 
 export class PostgresDeleteUserRepository implements IDeleteUserRepository {
     async execute(userId: string): Promise<PublicUser | null> {
-        const deletedUser = await PostgresHelper.query(
-            'DELETE FROM users WHERE id = $1 RETURNING  id, first_name, last_name, email',
-            [userId],
-        )
+        try {
+            const deletedUser = await prisma.user.delete({
+                where: {
+                    id: userId,
+                },
+                select: {
+                    id: true,
+                    first_name: true,
+                    last_name: true,
+                    email: true,
+                },
+            })
 
-        return deletedUser[0] ?? null
+            return deletedUser
+        } catch (error) {
+            if (
+                error instanceof Prisma.PrismaClientKnownRequestError &&
+                error.code === 'P2025'
+            ) {
+                return null
+            }
+
+            return null
+        }
     }
 }

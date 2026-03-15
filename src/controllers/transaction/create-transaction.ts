@@ -1,19 +1,9 @@
 import type { Request } from 'express'
 import type { CreateTransactionParams } from '../../types/transaction.js'
-import { created, serverError } from '../helpers/http.js'
+import { badRequest, created, serverError } from '../helpers/http.js'
 import type { CreateTransactionUseCase } from '../../useCases/transaction/create-transaction.js'
-import {
-    checkIfIdIsValid,
-    invalidIdResponse,
-    requiredFieldIsMissing,
-    validateRequiredFields,
-} from '../helpers/index.js'
-import {
-    checkIfAmountIsValid,
-    checkIfTypeIsValid,
-    invalidAmountResponse,
-    invalidTypeResponse,
-} from '../helpers/transaction.js'
+import { createTransactionSchema } from '../../schemas/transaction.js'
+import { ZodError } from 'zod'
 
 export class CreateTransactionController {
     constructor(private createTransactionUseCase: CreateTransactionUseCase) {}
@@ -22,45 +12,24 @@ export class CreateTransactionController {
         httpRequest: Request<unknown, unknown, CreateTransactionParams>,
     ) {
         try {
-            const params = httpRequest.body
+            const params = await createTransactionSchema.parseAsync(
+                httpRequest.body,
+            )
 
-            const requiredFields: (keyof CreateTransactionParams)[] = [
-                'user_id',
-                'name',
-                'date',
-                'amount',
-                'type',
-            ]
-            const { ok: requiredFieldWereProvided, missingField } =
-                validateRequiredFields(params, requiredFields)
-
-            if (!requiredFieldWereProvided && missingField) {
-                return requiredFieldIsMissing(missingField)
-            }
-
-            const userIdValid = checkIfIdIsValid(params.user_id)
-
-            if (!userIdValid) {
-                return invalidIdResponse()
-            }
-
-            const amoutIsValid = checkIfAmountIsValid(params.amount)
-
-            if (!amoutIsValid) {
-                return invalidAmountResponse()
-            }
-
-            const typeIsValid = checkIfTypeIsValid(params.type)
-
-            if (!typeIsValid) {
-                return invalidTypeResponse()
-            }
-
-            const trasaction =
+            const transaction =
                 await this.createTransactionUseCase.execute(params)
 
-            return created(trasaction)
+            return created(transaction)
         } catch (error) {
+            if (error instanceof ZodError) {
+                return badRequest({
+                    message: error.issues.map((issue) => ({
+                        field: issue.path.join('.'),
+                        message: issue.message,
+                    })),
+                })
+            }
+
             console.error(error)
             return serverError()
         }

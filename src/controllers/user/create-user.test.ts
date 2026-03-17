@@ -1,5 +1,7 @@
 import type { Request } from 'express'
+import { faker } from '@faker-js/faker'
 import { jest } from '@jest/globals'
+
 import type { CreateUserParams, PublicUser } from '../../types/user.js'
 import { CreateUserController } from './create-user.js'
 
@@ -24,10 +26,12 @@ describe('Create User Controller', () => {
 
         const httpRequest = {
             body: {
-                first_name: 'Name Test',
-                last_name: 'Last Name Test',
-                email: 'test@email.com',
-                password: '12345678',
+                first_name: faker.person.firstName(),
+                last_name: faker.person.lastName(),
+                email: faker.internet.email(),
+                password: faker.internet.password({
+                    length: 7,
+                }),
             },
         } as Request<unknown, unknown, CreateUserParams>
 
@@ -46,9 +50,11 @@ describe('Create User Controller', () => {
 
         const httpRequest = {
             body: {
-                last_name: 'Last Name Test',
-                email: 'test@email.com',
-                password: '12345678',
+                last_name: faker.person.lastName(),
+                email: faker.internet.email(),
+                password: faker.internet.password({
+                    length: 7,
+                }),
             },
         } as Request<unknown, unknown, CreateUserParams>
 
@@ -65,9 +71,11 @@ describe('Create User Controller', () => {
 
         const httpRequest = {
             body: {
-                first_name: 'First Name Test',
-                email: 'test@email.com',
-                password: '12345678',
+                first_name: faker.person.firstName(),
+                email: faker.internet.email(),
+                password: faker.internet.password({
+                    length: 7,
+                }),
             },
         } as Request<unknown, unknown, CreateUserParams>
 
@@ -84,9 +92,11 @@ describe('Create User Controller', () => {
 
         const httpRequest = {
             body: {
-                first_name: 'First Name Test',
-                last_name: 'Last Name Test',
-                password: '12345678',
+                first_name: faker.person.firstName(),
+                last_name: faker.person.lastName(),
+                password: faker.internet.password({
+                    length: 7,
+                }),
             },
         } as Request<unknown, unknown, CreateUserParams>
 
@@ -103,10 +113,12 @@ describe('Create User Controller', () => {
 
         const httpRequest = {
             body: {
-                first_name: 'First Name Test',
-                last_name: 'Last Name Test',
-                email: 'test',
-                password: '12345678',
+                first_name: faker.person.firstName(),
+                last_name: faker.person.lastName(),
+                email: 'invalid-email',
+                password: faker.internet.password({
+                    length: 7,
+                }),
             },
         } as Request<unknown, unknown, CreateUserParams>
 
@@ -123,9 +135,9 @@ describe('Create User Controller', () => {
 
         const httpRequest = {
             body: {
-                first_name: 'First Name Test',
-                last_name: 'Last Name Test',
-                email: 'test',
+                first_name: faker.person.firstName(),
+                last_name: faker.person.lastName(),
+                email: faker.internet.email(),
             },
         } as Request<unknown, unknown, CreateUserParams>
 
@@ -142,10 +154,12 @@ describe('Create User Controller', () => {
 
         const httpRequest = {
             body: {
-                first_name: 'First Name Test',
-                last_name: 'Last Name Test',
-                email: 'test',
-                password: '12345',
+                first_name: faker.person.firstName(),
+                last_name: faker.person.lastName(),
+                email: faker.internet.email(),
+                password: faker.internet.password({
+                    length: 3,
+                }),
             },
         } as Request<unknown, unknown, CreateUserParams>
 

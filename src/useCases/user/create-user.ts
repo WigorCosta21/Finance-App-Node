@@ -5,7 +5,7 @@ import type { CreateUserParams } from '../../types/user.js'
 import type { ICreateUserRepository } from '../../repositories/interfaces/user/create-user.js'
 import type { IGetUserByEmailRepository } from '../../repositories/interfaces/user/get-user-by-email.js'
 
-export class CreateUserUseCase {
+export class CreateUserUseCase implements ICreateUserRepository {
     constructor(
         private createUserRepository: ICreateUserRepository,
         private getUserByEmail: IGetUserByEmailRepository,

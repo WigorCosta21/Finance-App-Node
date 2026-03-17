@@ -1,15 +1,15 @@
 import type { Request } from 'express'
 import { ZodError } from 'zod'
 
-import { CreateUserUseCase } from '../../useCases/index.js'
 import { EmailAlreadyInUseError } from '../../errors/user.js'
 import { badRequest, created, serverError } from '../helpers/index.js'
 
 import type { CreateUserParams } from '../../types/user.js'
 import { createUserSchema } from '../../schemas/index.js'
+import type { ICreateUserUseCase } from '../../useCases/interfaces/user/create-user.js'
 
 export class CreateUserController {
-    constructor(private createUserUseCase: CreateUserUseCase) {}
+    constructor(private createUserUseCase: ICreateUserUseCase) {}
 
     async execute(httpRequest: Request<unknown, unknown, CreateUserParams>) {
         try {

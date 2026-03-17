@@ -1,4 +1,5 @@
 import type { Request } from 'express'
+import { jest } from '@jest/globals'
 import type { CreateUserParams, PublicUser } from '../../types/user.js'
 import { CreateUserController } from './create-user.js'
 
@@ -151,5 +152,28 @@ describe('Create User Controller', () => {
         const result = await createUserController.execute(httpRequest)
 
         expect(result.statusCode).toBe(400)
+    })
+
+    it('should call CreateUserUseCase with correct params', async () => {
+        const createUserUseCaseSub = new CreateUserUseCaseStub()
+
+        const createUserController = new CreateUserController(
+            createUserUseCaseSub,
+        )
+
+        const httpRequest = {
+            body: {
+                first_name: 'First Name Test',
+                last_name: 'Last Name Test',
+                email: 'test@email.com',
+                password: '123456',
+            },
+        } as Request<unknown, unknown, CreateUserParams>
+
+        const executeSpy = jest.spyOn(createUserUseCaseSub, 'execute')
+
+        await createUserController.execute(httpRequest)
+
+        expect(executeSpy).toHaveBeenCalledWith(httpRequest.body)
     })
 })

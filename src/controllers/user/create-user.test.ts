@@ -4,6 +4,7 @@ import { jest } from '@jest/globals'
 
 import type { CreateUserParams, PublicUser } from '../../types/user.js'
 import { CreateUserController } from './create-user.js'
+import { EmailAlreadyInUseError } from '../../errors/user.js'
 
 describe('Create User Controller', () => {
     class CreateUserUseCaseStub {
@@ -216,5 +217,32 @@ describe('Create User Controller', () => {
         const result = await createUserController.execute(httpRequest)
 
         expect(result.statusCode).toBe(500)
+    })
+
+    it('should return 500 if CreateUserUseCase throws EmailAlreadyInUseError', async () => {
+        const createUserUseCaseSub = new CreateUserUseCaseStub()
+
+        const createUserController = new CreateUserController(
+            createUserUseCaseSub,
+        )
+
+        const httpRequest = {
+            body: {
+                first_name: 'First Name Test',
+                last_name: 'Last Name Test',
+                email: 'test@email.com',
+                password: '123456',
+            },
+        } as Request<unknown, unknown, CreateUserParams>
+
+        jest.spyOn(createUserUseCaseSub, 'execute').mockImplementationOnce(
+            () => {
+                throw new EmailAlreadyInUseError(httpRequest.body.email)
+            },
+        )
+
+        const result = await createUserController.execute(httpRequest)
+
+        expect(result.statusCode).toBe(400)
     })
 })

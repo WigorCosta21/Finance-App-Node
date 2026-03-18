@@ -9,7 +9,7 @@
         "lint:fix": "eslint . --fix",
         "format:write": "prettier . --write",
         "migrations:run": "npx tsx src/db/postgres/migrations/exec.ts",
-        "test:dev": "set NODE_OPTIONS=--experimental-vm-modules && npx jest --watchAll --runInBand"
+        "test:dev": "set NODE_OPTIONS=--experimental-vm-modules && npx jest --watchAll --runInBand --silent"
     },
     "keywords": [],
     "author": "",

@@ -15,7 +15,7 @@ describe('Delete User Controller', () => {
         }
     }
 
-    const makesub = () => {
+    const makeSut = () => {
         const deleteUserUseCase = new DeleteUserUseCaseStub()
 
         const sub = new DeleteUserController(deleteUserUseCase)
@@ -23,17 +23,26 @@ describe('Delete User Controller', () => {
         return { deleteUserUseCase, sub }
     }
 
-    const httpRequest = {
-        params: {
-            userId: faker.string.uuid(),
-        },
-    } as Request<UserIdParams>
+    const makeHttpRequest = (userId?: string) =>
+        ({
+            params: {
+                userId: userId ?? faker.string.uuid(),
+            },
+        }) as Request<UserIdParams>
 
     it('should return 200 if user is deleted', async () => {
-        const { sub } = makesub()
+        const { sub } = makeSut()
 
-        const result = await sub.execute(httpRequest)
+        const result = await sub.execute(makeHttpRequest())
 
         expect(result.statusCode).toBe(200)
+    })
+
+    it('should return 400 if id is invalid', async () => {
+        const { sub } = makeSut()
+
+        const result = await sub.execute(makeHttpRequest('invalid_id'))
+
+        expect(result.statusCode).toBe(400)
     })
 })

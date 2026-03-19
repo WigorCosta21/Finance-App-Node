@@ -1,11 +1,12 @@
 import type { Request } from 'express'
 import { faker } from '@faker-js/faker'
+import { jest } from '@jest/globals'
 import { DeleteUserController } from './delete-user.js'
-import type { UserIdParams } from '../../types/user.js'
+import type { PublicUser, UserIdParams } from '../../types/user.js'
 
 describe('Delete User Controller', () => {
     class DeleteUserUseCaseStub {
-        async execute() {
+        async execute(): Promise<PublicUser | null> {
             return {
                 id: faker.string.uuid(),
                 first_name: faker.person.firstName(),
@@ -44,5 +45,15 @@ describe('Delete User Controller', () => {
         const result = await sub.execute(makeHttpRequest('invalid_id'))
 
         expect(result.statusCode).toBe(400)
+    })
+
+    it('should return 404 if user is not found', async () => {
+        const { sub, deleteUserUseCase } = makeSut()
+
+        jest.spyOn(deleteUserUseCase, 'execute').mockResolvedValueOnce(null)
+
+        const result = await sub.execute(makeHttpRequest())
+
+        expect(result.statusCode).toBe(404)
     })
 })

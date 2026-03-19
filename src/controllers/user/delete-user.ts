@@ -6,10 +6,10 @@ import {
     invalidIdResponse,
     userNotFoundRespose,
 } from './../helpers/index.js'
-import { DeleteUserUseCase } from '../../useCases/index.js'
+import type { IDeleteUserUseCase } from '../../useCases/interfaces/user/delete-user.js'
 
 export class DeleteUserController {
-    constructor(private deleteUserUseCase: DeleteUserUseCase) {}
+    constructor(private deleteUserUseCase: IDeleteUserUseCase) {}
 
     async execute(httpRequest: Request<UserIdParams>) {
         try {

@@ -1,13 +1,13 @@
 import type { Request } from 'express'
-import type { GetUserBalanceUseCase } from '../../useCases/index.js'
 import type { UserBalance, UserIdParams } from '../../types/user.js'
 import { ok, serverError } from '../helpers/http.js'
 import { userNotFoundRespose } from '../helpers/user.js'
 import { UserNotFoundError } from '../../errors/user.js'
 import { checkIfIdIsValid, invalidIdResponse } from '../helpers/validation.js'
+import type { IGetUserBalanceUseCase } from '../../useCases/interfaces/user/get-user-balance.js'
 
 export class GetUserBalanceController {
-    constructor(private getUserBalanceUseCase: GetUserBalanceUseCase) {}
+    constructor(private getUserBalanceUseCase: IGetUserBalanceUseCase) {}
 
     async execute(httpRequest: Request<UserIdParams, unknown, UserBalance>) {
         try {

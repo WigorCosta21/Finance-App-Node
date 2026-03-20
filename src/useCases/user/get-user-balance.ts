@@ -1,8 +1,9 @@
 import { UserNotFoundError } from '../../errors/user.js'
 import type { IGetUserBalanceRepository } from '../../repositories/interfaces/user/get-user-balance.js'
 import type { IGetUserByIdRepository } from '../../repositories/interfaces/user/get-user-by-id.js'
+import type { IGetUserBalanceUseCase } from '../interfaces/user/get-user-balance.js'
 
-export class GetUserBalanceUseCase {
+export class GetUserBalanceUseCase implements IGetUserBalanceUseCase {
     constructor(
         private getUserBalanceRepository: IGetUserBalanceRepository,
         private getUserByIdRepository: IGetUserByIdRepository,

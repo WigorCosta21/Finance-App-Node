@@ -1,6 +1,5 @@
 import type { Request } from 'express'
 
-import { GetUserByIdUseCase } from '../../useCases/index.js'
 import {
     checkIfIdIsValid,
     invalidIdResponse,
@@ -9,9 +8,10 @@ import {
     userNotFoundRespose,
 } from '../helpers/index.js'
 import type { UserIdParams } from '../../types/user.js'
+import type { IGetUserByIdUseCase } from '../../useCases/interfaces/user/get-user-by-id.js'
 
 export class GetUserByIdController {
-    constructor(private getUserByIdUseCase: GetUserByIdUseCase) {}
+    constructor(private getUserByIdUseCase: IGetUserByIdUseCase) {}
 
     async execute(httpRequest: Request<UserIdParams>) {
         try {
@@ -31,7 +31,7 @@ export class GetUserByIdController {
 
             return ok(user)
         } catch (error) {
-            console.log(error)
+            console.error(error)
             return serverError()
         }
     }

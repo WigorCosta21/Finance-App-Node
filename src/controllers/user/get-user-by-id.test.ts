@@ -38,4 +38,12 @@ describe('GetUserByIdController', () => {
 
         expect(result.statusCode).toBe(200)
     })
+
+    it('should return 400 if an invalid id is provider', async () => {
+        const { sub } = makeSut()
+
+        const result = await sub.execute(makeHttpRequest('invalid_id'))
+
+        expect(result.statusCode).toBe(400)
+    })
 })

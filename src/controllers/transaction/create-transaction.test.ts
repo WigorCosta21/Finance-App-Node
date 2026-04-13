@@ -45,10 +45,20 @@ describe('CreateTransactionController', () => {
             body,
         }) as Request<unknown, unknown, CreateTransactionParams>
 
-    it('should return 201 when creating transaction', async () => {
+    it('should return 201 when creating transaction (expense)', async () => {
         const { sut } = makeSut()
 
         const result = await sut.execute(makeHttpRequest(makeHttpRequestBody()))
+
+        expect(result.statusCode).toBe(201)
+    })
+
+    it('should return 201 when creating transaction (earning)', async () => {
+        const { sut } = makeSut()
+
+        const result = await sut.execute(
+            makeHttpRequest({ ...makeHttpRequestBody(), type: 'EARNING' }),
+        )
 
         expect(result.statusCode).toBe(201)
     })

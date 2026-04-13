@@ -1,7 +1,6 @@
 import type { Request } from 'express'
 import { faker } from '@faker-js/faker'
 import type {
-    CreateTransactionBody,
     CreateTransactionParams,
     Transaction,
 } from '../../types/transaction.js'
@@ -31,24 +30,36 @@ describe('CreateTransactionController', () => {
         return { createTransactionUseCase, sut }
     }
 
-    const makeHttpRequestBody = (body?: Partial<CreateTransactionBody>) => {
+    const makeHttpRequestBody = () => {
         return {
-            body: {
-                user_id: faker.string.uuid(),
-                name: faker.commerce.productName(),
-                date: faker.date.recent().toISOString(),
-                type: 'EARNING',
-                amount: Number(faker.finance.amount()),
-                ...body,
-            },
-        } as Request<unknown, unknown, CreateTransactionBody>
+            user_id: faker.string.uuid(),
+            name: faker.commerce.productName(),
+            date: faker.date.recent().toISOString(),
+            type: 'EARNING',
+            amount: Number(faker.finance.amount()),
+        }
     }
+
+    const makeHttpRequest = (body: unknown) =>
+        ({
+            body,
+        }) as Request<unknown, unknown, CreateTransactionParams>
 
     it('should return 201 when creating transaction', async () => {
         const { sut } = makeSut()
 
-        const result = await sut.execute(makeHttpRequestBody())
+        const result = await sut.execute(makeHttpRequest(makeHttpRequestBody()))
 
         expect(result.statusCode).toBe(201)
+    })
+
+    it('shound return 400 when missing user_id', async () => {
+        const { sut } = makeSut()
+
+        const result = await sut.execute(
+            makeHttpRequest({ ...makeHttpRequestBody(), user_id: undefined }),
+        )
+
+        expect(result.statusCode).toBe(400)
     })
 })

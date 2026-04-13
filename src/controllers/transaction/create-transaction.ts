@@ -1,12 +1,12 @@
 import type { Request } from 'express'
 import type { CreateTransactionParams } from '../../types/transaction.js'
 import { badRequest, created, serverError } from '../helpers/http.js'
-import type { CreateTransactionUseCase } from '../../useCases/transaction/create-transaction.js'
 import { createTransactionSchema } from '../../schemas/transaction.js'
 import { ZodError } from 'zod'
+import type { ICreateTransactionUseCase } from '../../useCases/interfaces/transaction/create-transaction.js'
 
 export class CreateTransactionController {
-    constructor(private createTransactionUseCase: CreateTransactionUseCase) {}
+    constructor(private createTransactionUseCase: ICreateTransactionUseCase) {}
 
     async execute(
         httpRequest: Request<unknown, unknown, CreateTransactionParams>,

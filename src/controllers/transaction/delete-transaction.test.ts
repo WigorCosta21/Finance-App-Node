@@ -1,5 +1,6 @@
 import type { Request } from 'express'
 import { faker } from '@faker-js/faker'
+import { jest } from '@jest/globals'
 import type {
     Transaction,
     TransactionIdParams,
@@ -50,5 +51,17 @@ describe('DeleteTransactionController', () => {
         const result = await sub.execute(makeHttpRequest('invalid_id'))
 
         expect(result.statusCode).toBe(400)
+    })
+
+    it('should return 404 if transaction is not found', async () => {
+        const { sub, deleteTransactionUseCase } = makeSut()
+
+        jest.spyOn(deleteTransactionUseCase, 'execute').mockResolvedValueOnce(
+            null,
+        )
+
+        const result = await sub.execute(makeHttpRequest())
+
+        expect(result.statusCode).toBe(404)
     })
 })

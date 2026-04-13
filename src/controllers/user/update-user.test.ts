@@ -31,7 +31,7 @@ describe('UpdateUserController', () => {
         return { updateUserUseCase, sut }
     }
 
-    const makeHttpRequestBody = (body?: UpdateUserParams, userId?: string) => {
+    const makeHttpRequestBody = (body?: unknown, userId?: string) => {
         return {
             params: {
                 userId: userId ?? faker.string.uuid(),
@@ -79,6 +79,28 @@ describe('UpdateUserController', () => {
 
         const result = await sut.execute(
             makeHttpRequestBody(undefined, 'invalid_id'),
+        )
+
+        expect(result.statusCode).toBe(400)
+    })
+
+    it('should return 400 when an invalid id is provided', async () => {
+        const { sut } = makeSut()
+
+        const result = await sut.execute(
+            makeHttpRequestBody(undefined, 'invalid_id'),
+        )
+
+        expect(result.statusCode).toBe(400)
+    })
+
+    it('should return 400 when an unallowed_field is provided', async () => {
+        const { sut } = makeSut()
+
+        const result = await sut.execute(
+            makeHttpRequestBody({
+                unallowed_field: 'unallowed_field',
+            }) as Request<UserIdParams, unknown, UpdateUserParams>,
         )
 
         expect(result.statusCode).toBe(400)

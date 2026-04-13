@@ -8,14 +8,14 @@ import {
     invalidAmountResponse,
     invalidTypeResponse,
 } from '../helpers/transaction.js'
-import type { UpdateTransactionUseCase } from '../../useCases/index.js'
+import type { IUpdateTransactionUseCase } from '../../useCases/interfaces/transaction/update-transaction.js'
 
 export interface ITransactionIdParams {
     transactionId: string
 }
 
 export class UpdateTransactionController {
-    constructor(private updateTransactionUseCase: UpdateTransactionUseCase) {}
+    constructor(private updateTransactionUseCase: IUpdateTransactionUseCase) {}
 
     async execute(
         httpRequest: Request<

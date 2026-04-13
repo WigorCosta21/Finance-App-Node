@@ -1,5 +1,4 @@
 import type { Request } from 'express'
-import { UpdateUserUseCase } from '../../useCases/index.js'
 import { EmailAlreadyInUseError } from '../../errors/user.js'
 import {
     checkIfIdIsValid,
@@ -11,9 +10,10 @@ import {
 import type { UpdateUserParams, UserIdParams } from '../../types/user.js'
 import { updateUserSchema } from '../../schemas/user.js'
 import { ZodError } from 'zod'
+import type { IUpdateUserUseCase } from '../../useCases/interfaces/user/update-user.js'
 
 export class UpdateUserController {
-    constructor(private updateUserUseCase: UpdateUserUseCase) {}
+    constructor(private updateUserUseCase: IUpdateUserUseCase) {}
     async execute(
         httpRequest: Request<UserIdParams, unknown, UpdateUserParams>,
     ) {

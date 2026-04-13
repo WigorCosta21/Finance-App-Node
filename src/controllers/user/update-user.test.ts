@@ -1,5 +1,6 @@
 import { type Request } from 'express'
 import { faker } from '@faker-js/faker'
+import { jest } from '@jest/globals'
 import { UpdateUserController } from './update-user.js'
 import type {
     PublicUser,
@@ -104,5 +105,17 @@ describe('UpdateUserController', () => {
         )
 
         expect(result.statusCode).toBe(400)
+    })
+
+    it('should return 500 if UpdateUserUserCase throws with generic error', async () => {
+        const { sut, updateUserUseCase } = makeSut()
+
+        jest.spyOn(updateUserUseCase, 'execute').mockRejectedValueOnce(
+            new Error(),
+        )
+
+        const result = await sut.execute(makeHttpRequestBody())
+
+        expect(result.statusCode).toBe(500)
     })
 })

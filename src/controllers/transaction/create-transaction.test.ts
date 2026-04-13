@@ -14,7 +14,7 @@ describe('CreateTransactionController', () => {
             return {
                 id: faker.string.uuid(),
                 user_id: faker.string.uuid(),
-                name: transaction.user_id,
+                name: transaction.name,
                 date: transaction.date,
                 amount: transaction.amount,
                 type: transaction.type,
@@ -88,6 +88,25 @@ describe('CreateTransactionController', () => {
 
         const result = await sut.execute(
             makeHttpRequest({ ...makeHttpRequestBody(), type: undefined }),
+        )
+
+        expect(result.statusCode).toBe(400)
+    })
+
+    it('shound return 400 when missing amount', async () => {
+        const { sut } = makeSut()
+
+        const result = await sut.execute(
+            makeHttpRequest({ ...makeHttpRequestBody(), amount: undefined }),
+        )
+
+        expect(result.statusCode).toBe(400)
+    })
+    it('shound return 400 when date is invalid', async () => {
+        const { sut } = makeSut()
+
+        const result = await sut.execute(
+            makeHttpRequest({ ...makeHttpRequestBody(), date: 'invalid_date' }),
         )
 
         expect(result.statusCode).toBe(400)

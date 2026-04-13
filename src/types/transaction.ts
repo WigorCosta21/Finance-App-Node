@@ -20,6 +20,10 @@ export interface TransactionIdParams {
     transactionId: string
 }
 
+export interface UserIdParams {
+    userId: string
+}
+
 export type UpdateTransactionParams = {
     name?: string
     date?: string

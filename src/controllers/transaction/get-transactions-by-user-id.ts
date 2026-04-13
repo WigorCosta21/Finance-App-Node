@@ -9,10 +9,7 @@ import {
     requiredFieldIsMissing,
 } from '../helpers/validation.js'
 import type { IGetTransactionByUserIdUseCase } from '../../useCases/interfaces/transaction/get-transaction-by-user-id.js'
-
-interface UserIdParams {
-    userId: string
-}
+import type { UserIdQuery } from '../../types/user.js'
 
 export class GetTransactionsByUserIdController {
     constructor(
@@ -20,7 +17,7 @@ export class GetTransactionsByUserIdController {
     ) {}
 
     async execute(
-        httpRequest: Request<unknown, unknown, unknown, UserIdParams>,
+        httpRequest: Request<unknown, unknown, unknown, UserIdQuery>,
     ) {
         try {
             const userId = httpRequest.query.userId

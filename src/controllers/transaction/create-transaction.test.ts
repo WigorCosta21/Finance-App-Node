@@ -1,5 +1,6 @@
 import type { Request } from 'express'
 import { faker } from '@faker-js/faker'
+import { jest } from '@jest/globals'
 import type {
     CreateTransactionParams,
     Transaction,
@@ -153,5 +154,17 @@ describe('CreateTransactionController', () => {
         )
 
         expect(result.statusCode).toBe(400)
+    })
+
+    it('shound return 500 when CreateTransactionUseCase throwns', async () => {
+        const { sut, createTransactionUseCase } = makeSut()
+
+        jest.spyOn(createTransactionUseCase, 'execute').mockRejectedValueOnce(
+            new Error(),
+        )
+
+        const result = await sut.execute(makeHttpRequest(makeHttpRequestBody()))
+
+        expect(result.statusCode).toBe(500)
     })
 })

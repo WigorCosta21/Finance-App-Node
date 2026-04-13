@@ -8,7 +8,7 @@ import {
     invalidIdResponse,
     requiredFieldIsMissing,
 } from '../helpers/validation.js'
-import type { GetTransactionsByUserIdUseCase } from '../../useCases/index.js'
+import type { IGetTransactionByUserIdUseCase } from '../../useCases/interfaces/transaction/get-transaction-by-user-id.js'
 
 interface UserIdParams {
     userId: string
@@ -16,7 +16,7 @@ interface UserIdParams {
 
 export class GetTransactionsByUserIdController {
     constructor(
-        private GetTransactionsByUserIdUseCase: GetTransactionsByUserIdUseCase,
+        private GetTransactionsByUserIdUseCase: IGetTransactionByUserIdUseCase,
     ) {}
 
     async execute(

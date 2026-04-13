@@ -7,6 +7,7 @@ import type {
     UpdateUserParams,
     UserIdParams,
 } from '../../types/user.js'
+import { EmailAlreadyInUseError } from '../../errors/user.js'
 
 describe('UpdateUserController', () => {
     class UpdateUserUseCaseStub {
@@ -117,5 +118,17 @@ describe('UpdateUserController', () => {
         const result = await sut.execute(makeHttpRequestBody())
 
         expect(result.statusCode).toBe(500)
+    })
+
+    it('should return 400 if UpdateUserUserCase throws EmailAlreadyInUseError', async () => {
+        const { sut, updateUserUseCase } = makeSut()
+
+        jest.spyOn(updateUserUseCase, 'execute').mockRejectedValueOnce(
+            new EmailAlreadyInUseError(faker.internet.email()),
+        )
+
+        const result = await sut.execute(makeHttpRequestBody())
+
+        expect(result.statusCode).toBe(400)
     })
 })

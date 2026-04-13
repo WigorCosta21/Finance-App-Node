@@ -1,8 +1,10 @@
 import type { Request } from 'express'
 import { faker } from '@faker-js/faker'
+import { jest } from '@jest/globals'
 import type { Transaction } from '../../types/transaction.js'
 import { GetTransactionsByUserIdController } from './get-transactions-by-user-id.js'
 import type { UserIdQuery } from '../../types/user.js'
+import { UserNotFoundError } from '../../errors/user.js'
 
 describe('GetTransactionByUserIdController', () => {
     class GetTransactionByUserIdUseCaseStub {
@@ -51,7 +53,7 @@ describe('GetTransactionByUserIdController', () => {
         expect(response.statusCode).toBe(200)
     })
 
-    it('should return 400 when when missing userId params', async () => {
+    it('should return 400 when missing userId params', async () => {
         const { sub } = makeSut()
 
         const response = await sub.execute(
@@ -61,5 +63,18 @@ describe('GetTransactionByUserIdController', () => {
         )
 
         expect(response.statusCode).toBe(400)
+    })
+
+    it('should return 404 when GetUserByIdUseCase throws UserNotFoundError', async () => {
+        const { sub, getTransactionByUserIdUseCase } = makeSut()
+
+        jest.spyOn(
+            getTransactionByUserIdUseCase,
+            'execute',
+        ).mockRejectedValueOnce(new UserNotFoundError('user_id_not_found'))
+
+        const response = await sub.execute(makeHttpRequest())
+
+        expect(response.statusCode).toBe(404)
     })
 })

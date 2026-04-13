@@ -37,11 +37,29 @@ describe('GetTransactionByUserIdController', () => {
         } as Request<unknown, unknown, unknown, UserIdQuery>
     }
 
+    const makeInvalidHttpRequest = (query: unknown) => {
+        return {
+            query,
+        } as unknown as Request<unknown, unknown, unknown, UserIdQuery>
+    }
+
     it('should return 200 when finding transaction by user id successfully', async () => {
         const { sub } = makeSut()
 
         const response = await sub.execute(makeHttpRequest())
 
         expect(response.statusCode).toBe(200)
+    })
+
+    it('should return 400 when when missing userId params', async () => {
+        const { sub } = makeSut()
+
+        const response = await sub.execute(
+            makeInvalidHttpRequest({
+                userId: undefined,
+            }),
+        )
+
+        expect(response.statusCode).toBe(400)
     })
 })

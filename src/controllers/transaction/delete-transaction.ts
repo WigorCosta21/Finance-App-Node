@@ -1,12 +1,12 @@
 import type { Request } from 'express'
-import type { DeleteTransactionUseCase } from '../../useCases/index.js'
 import type { TransactionIdParams } from '../../types/transaction.js'
 import { ok, serverError } from '../helpers/http.js'
 import { checkIfIdIsValid, invalidIdResponse } from '../helpers/validation.js'
 import { transactionNotFoundRespose } from '../helpers/transaction.js'
+import type { IDeleteTransactionUseCase } from '../../useCases/interfaces/transaction/delete-transaction.js'
 
 export class DeleteTransactionController {
-    constructor(private deleteTransactionUseCase: DeleteTransactionUseCase) {}
+    constructor(private deleteTransactionUseCase: IDeleteTransactionUseCase) {}
 
     async execute(httpRequest: Request<TransactionIdParams>) {
         try {

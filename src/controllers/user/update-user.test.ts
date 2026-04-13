@@ -1,4 +1,4 @@
-import type { Request } from 'express'
+import { type Request } from 'express'
 import { faker } from '@faker-js/faker'
 import { UpdateUserController } from './update-user.js'
 import type {
@@ -31,7 +31,7 @@ describe('UpdateUserController', () => {
         return { updateUserUseCase, sut }
     }
 
-    const makeHttpRequest = (body?: UpdateUserParams, userId?: string) => {
+    const makeHttpRequestBody = (body?: UpdateUserParams, userId?: string) => {
         return {
             params: {
                 userId: userId ?? faker.string.uuid(),
@@ -45,8 +45,20 @@ describe('UpdateUserController', () => {
     it('should return 200 when updating an user successfully', async () => {
         const { sut } = makeSut()
 
-        const response = await sut.execute(makeHttpRequest())
+        const response = await sut.execute(makeHttpRequestBody())
 
         expect(response.statusCode).toBe(200)
+    })
+
+    it('should return 400 when an invalid email is provided', async () => {
+        const { sut } = makeSut()
+
+        const result = await sut.execute(
+            makeHttpRequestBody({
+                email: 'invalid_email',
+            }),
+        )
+
+        expect(result.statusCode).toBe(400)
     })
 })

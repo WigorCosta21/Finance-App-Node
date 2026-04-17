@@ -9,9 +9,9 @@ import { DeleteTransactionController } from './delete-transaction.js'
 
 describe('DeleteTransactionController', () => {
     class DeleteTransactionUseCaseStub {
-        async execute(): Promise<Transaction | null> {
+        async execute(transactionId: string): Promise<Transaction | null> {
             return {
-                id: faker.string.uuid(),
+                id: transactionId,
                 user_id: faker.string.uuid(),
                 name: faker.commerce.productName(),
                 date: faker.date.anytime.toString(),
@@ -77,5 +77,18 @@ describe('DeleteTransactionController', () => {
         const result = await sub.execute(makeHttpRequest())
 
         expect(result.statusCode).toBe(500)
+    })
+
+    it('should call DeleteTransactionUseCase with correct params', async () => {
+        const { sub, deleteTransactionUseCase } = makeSut()
+
+        const executeSpy = jest.spyOn(deleteTransactionUseCase, 'execute')
+
+        const transactionId = faker.string.uuid()
+        const httpRequest = makeHttpRequest(transactionId)
+
+        await sub.execute(httpRequest)
+
+        expect(executeSpy).toHaveBeenCalledWith(transactionId)
     })
 })

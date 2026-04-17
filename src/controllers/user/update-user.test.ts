@@ -33,7 +33,7 @@ describe('UpdateUserController', () => {
         return { updateUserUseCase, sut }
     }
 
-    const makeHttpRequestBody = (body?: unknown, userId?: string) => {
+    const makeHttpRequest = (body?: unknown, userId?: string) => {
         return {
             params: {
                 userId: userId ?? faker.string.uuid(),
@@ -47,7 +47,7 @@ describe('UpdateUserController', () => {
     it('should return 200 when updating an user successfully', async () => {
         const { sut } = makeSut()
 
-        const response = await sut.execute(makeHttpRequestBody())
+        const response = await sut.execute(makeHttpRequest())
 
         expect(response.statusCode).toBe(200)
     })
@@ -56,7 +56,7 @@ describe('UpdateUserController', () => {
         const { sut } = makeSut()
 
         const result = await sut.execute(
-            makeHttpRequestBody({
+            makeHttpRequest({
                 email: 'invalid_email',
             }),
         )
@@ -68,7 +68,7 @@ describe('UpdateUserController', () => {
         const { sut } = makeSut()
 
         const result = await sut.execute(
-            makeHttpRequestBody({
+            makeHttpRequest({
                 password: faker.internet.password({ length: 5 }),
             }),
         )
@@ -80,7 +80,7 @@ describe('UpdateUserController', () => {
         const { sut } = makeSut()
 
         const result = await sut.execute(
-            makeHttpRequestBody(undefined, 'invalid_id'),
+            makeHttpRequest(undefined, 'invalid_id'),
         )
 
         expect(result.statusCode).toBe(400)
@@ -90,7 +90,7 @@ describe('UpdateUserController', () => {
         const { sut } = makeSut()
 
         const result = await sut.execute(
-            makeHttpRequestBody(undefined, 'invalid_id'),
+            makeHttpRequest(undefined, 'invalid_id'),
         )
 
         expect(result.statusCode).toBe(400)
@@ -100,7 +100,7 @@ describe('UpdateUserController', () => {
         const { sut } = makeSut()
 
         const result = await sut.execute(
-            makeHttpRequestBody({
+            makeHttpRequest({
                 unallowed_field: 'unallowed_field',
             }) as Request<UserIdParams, unknown, UpdateUserParams>,
         )
@@ -115,7 +115,7 @@ describe('UpdateUserController', () => {
             new Error(),
         )
 
-        const result = await sut.execute(makeHttpRequestBody())
+        const result = await sut.execute(makeHttpRequest())
 
         expect(result.statusCode).toBe(500)
     })
@@ -127,8 +127,24 @@ describe('UpdateUserController', () => {
             new EmailAlreadyInUseError(faker.internet.email()),
         )
 
-        const result = await sut.execute(makeHttpRequestBody())
+        const result = await sut.execute(makeHttpRequest())
 
         expect(result.statusCode).toBe(400)
+    })
+
+    it('should call UpdateUserUseCase with correct params', async () => {
+        const { sut, updateUserUseCase } = makeSut()
+
+        const executeSpy = jest.spyOn(updateUserUseCase, 'execute')
+
+        const userId = faker.string.uuid()
+        const body = {
+            first_name: faker.person.firstName(),
+        }
+        const httpResquest = makeHttpRequest(body, userId)
+
+        await sut.execute(httpResquest)
+
+        expect(executeSpy).toHaveBeenCalledWith(userId, body)
     })
 })

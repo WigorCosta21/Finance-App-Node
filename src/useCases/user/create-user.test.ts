@@ -134,4 +134,17 @@ describe('CreateUserUseCase', () => {
             id: 'generated_id',
         })
     })
+
+    it('should throw if GetUserByEmailRepository throws', async () => {
+        const { sut, getUserByEmailRepositoryEmail } = makeSut()
+
+        jest.spyOn(
+            getUserByEmailRepositoryEmail,
+            'execute',
+        ).mockRejectedValueOnce(new Error())
+
+        const promise = sut.execute(makeHttpRequestBody())
+
+        await expect(promise).rejects.toThrow()
+    })
 })

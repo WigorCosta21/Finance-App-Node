@@ -4,8 +4,9 @@ import { EmailAlreadyInUseError } from '../../errors/user.js'
 import type { UpdateUserParams } from '../../types/user.js'
 import type { IUpdateUserRepository } from '../../repositories/interfaces/user/update-user.js'
 import type { IGetUserByEmailRepository } from '../../repositories/interfaces/user/get-user-by-email.js'
+import type { IUpdateUserUseCase } from '../interfaces/user/update-user.js'
 
-export class UpdateUserUseCase {
+export class UpdateUserUseCase implements IUpdateUserUseCase {
     constructor(
         private updateUserRepository: IUpdateUserRepository,
         private postgresGetUserByEmail: IGetUserByEmailRepository,

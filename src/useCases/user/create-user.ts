@@ -1,14 +1,16 @@
-import bcrypt from 'bcrypt'
 import { v4 as uuidv4 } from 'uuid'
 import { EmailAlreadyInUseError } from '../../errors/user.js'
 import type { CreateUserParams } from '../../types/user.js'
-import type { ICreateUserRepository } from '../../repositories/interfaces/user/create-user.js'
 import type { IGetUserByEmailRepository } from '../../repositories/interfaces/user/get-user-by-email.js'
+import type { PasswordHasherAdapter } from '../../adapters/password-hasher.js'
+import type { ICreateUserUseCase } from '../interfaces/user/create-user.js'
+import type { ICreateUserRepository } from '../../repositories/interfaces/user/create-user.js'
 
-export class CreateUserUseCase implements ICreateUserRepository {
+export class CreateUserUseCase implements ICreateUserUseCase {
     constructor(
         private createUserRepository: ICreateUserRepository,
         private getUserByEmail: IGetUserByEmailRepository,
+        private passwordHasherAdapter: PasswordHasherAdapter,
     ) {}
 
     async execute(createUserParams: CreateUserParams) {
@@ -22,7 +24,9 @@ export class CreateUserUseCase implements ICreateUserRepository {
 
         const userId = uuidv4()
 
-        const hashedPassword = await bcrypt.hash(createUserParams.password, 10)
+        const hashedPassword = await this.passwordHasherAdapter.execute(
+            createUserParams.password,
+        )
 
         const user = {
             ...createUserParams,

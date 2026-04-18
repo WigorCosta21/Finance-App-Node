@@ -4,6 +4,7 @@ import { jest } from '@jest/globals'
 import { GetUserBalanceController } from './get-user-balance.js'
 import type { UserBalance, UserIdParams } from '../../types/user.js'
 import type { IGetUserBalanceUseCase } from '../../useCases/interfaces/user/get-user-balance.js'
+import { UserNotFoundError } from '../../errors/user.js'
 
 describe('GetUserBalanceController', () => {
     class GetUserBalanceUseCaseStub implements IGetUserBalanceUseCase {
@@ -74,5 +75,19 @@ describe('GetUserBalanceController', () => {
         await sut.execute(httpResquest)
 
         expect(executeSpy).toHaveBeenCalledWith(userId)
+    })
+
+    it('should return 404 if GetUserBalanceUseCase throws UserNotFoundError', async () => {
+        const { sut, getUserBalanceUseCase } = makeSut()
+
+        const userId = faker.string.uuid()
+
+        jest.spyOn(getUserBalanceUseCase, 'execute').mockRejectedValueOnce(
+            new UserNotFoundError(userId),
+        )
+
+        const response = await sut.execute(makeHttpRequest())
+
+        expect(response.statusCode).toBe(404)
     })
 })

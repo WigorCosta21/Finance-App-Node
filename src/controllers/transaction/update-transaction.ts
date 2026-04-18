@@ -1,14 +1,11 @@
 import type { Request } from 'express'
+import { ZodError } from 'zod'
 import { badRequest, ok, serverError } from '../helpers/http.js'
 import { checkIfIdIsValid, invalidIdResponse } from '../helpers/validation.js'
 import type { UpdateTransactionParams } from '../../types/transaction.js'
-import {
-    checkIfAmountIsValid,
-    checkIfTypeIsValid,
-    invalidAmountResponse,
-    invalidTypeResponse,
-} from '../helpers/transaction.js'
+
 import type { IUpdateTransactionUseCase } from '../../useCases/interfaces/transaction/update-transaction.js'
+import { updateTransactionSchema } from '../../schemas/transaction.js'
 
 export interface ITransactionIdParams {
     transactionId: string
@@ -35,39 +32,7 @@ export class UpdateTransactionController {
 
             const params = httpRequest.body
 
-            const allowedFields: (keyof UpdateTransactionParams)[] = [
-                'name',
-                'date',
-                'amount',
-                'type',
-            ]
-
-            const someFieldIsNotAllowed = Object.keys(params).some(
-                (field) =>
-                    !allowedFields.includes(
-                        field as keyof UpdateTransactionParams,
-                    ),
-            )
-
-            if (someFieldIsNotAllowed) {
-                return badRequest('Some provided field is not allowed.')
-            }
-
-            if (params.amount) {
-                const amountIsValid = checkIfAmountIsValid(params.amount)
-
-                if (!amountIsValid) {
-                    return invalidAmountResponse()
-                }
-            }
-
-            if (params.type) {
-                const typeIsValid = checkIfTypeIsValid(params.type)
-
-                if (!typeIsValid) {
-                    return invalidTypeResponse()
-                }
-            }
+            await updateTransactionSchema.parseAsync(params)
 
             const transaction = await this.updateTransactionUseCase.execute(
                 transactionId,
@@ -76,6 +41,18 @@ export class UpdateTransactionController {
 
             return ok(transaction)
         } catch (error) {
+            if (error instanceof ZodError) {
+                return badRequest({
+                    message: error.issues.map((issue) => ({
+                        field: issue.path.join('.') || 'body',
+                        message:
+                            issue.code === 'unrecognized_keys'
+                                ? 'Some provided field is not allowed'
+                                : issue.message,
+                    })),
+                })
+            }
+
             console.log(error)
             return serverError()
         }

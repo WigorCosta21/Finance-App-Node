@@ -1,15 +1,15 @@
-import bcrypt from 'bcrypt'
-
 import { EmailAlreadyInUseError } from '../../errors/user.js'
 import type { UpdateUserParams } from '../../types/user.js'
 import type { IUpdateUserRepository } from '../../repositories/interfaces/user/update-user.js'
 import type { IGetUserByEmailRepository } from '../../repositories/interfaces/user/get-user-by-email.js'
 import type { IUpdateUserUseCase } from '../interfaces/user/update-user.js'
+import type { PasswordHasherAdapter } from '../../adapters/password-hasher.js'
 
 export class UpdateUserUseCase implements IUpdateUserUseCase {
     constructor(
         private updateUserRepository: IUpdateUserRepository,
         private postgresGetUserByEmail: IGetUserByEmailRepository,
+        private passwordHasherAdapter: PasswordHasherAdapter,
     ) {}
 
     async execute(userId: string, updateUserParams: UpdateUserParams) {
@@ -27,9 +27,8 @@ export class UpdateUserUseCase implements IUpdateUserUseCase {
         const user = { ...updateUserParams }
 
         if (updateUserParams.password) {
-            const hashedPassword = await bcrypt.hash(
+            const hashedPassword = await this.passwordHasherAdapter.execute(
                 updateUserParams.password,
-                10,
             )
 
             user.password = hashedPassword

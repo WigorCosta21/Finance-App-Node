@@ -62,9 +62,12 @@ export const makeUpdateUserController = () => {
 
     const getUserByEmail = new PostgresGetUserByEmailRepository()
 
+    const passwordHasherAdapter = new PasswordHasherAdapter()
+
     const updateUserUseCase = new UpdateUserUseCase(
         updateUserRepository,
         getUserByEmail,
+        passwordHasherAdapter,
     )
 
     const updateUserController = new UpdateUserController(updateUserUseCase)

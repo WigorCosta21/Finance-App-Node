@@ -1,8 +1,10 @@
-import { v4 as uuidv4 } from 'uuid'
 import { EmailAlreadyInUseError } from '../../errors/user.js'
 import type { CreateUserParams } from '../../types/user.js'
 import type { IGetUserByEmailRepository } from '../../repositories/interfaces/user/get-user-by-email.js'
-import type { PasswordHasherAdapter } from '../../adapters/password-hasher.js'
+import type {
+    PasswordHasherAdapter,
+    IdGeneratorAdapter,
+} from '../../adapters/index.js'
 import type { ICreateUserUseCase } from '../interfaces/user/create-user.js'
 import type { ICreateUserRepository } from '../../repositories/interfaces/user/create-user.js'
 
@@ -11,6 +13,7 @@ export class CreateUserUseCase implements ICreateUserUseCase {
         private createUserRepository: ICreateUserRepository,
         private getUserByEmail: IGetUserByEmailRepository,
         private passwordHasherAdapter: PasswordHasherAdapter,
+        private idGeneratorAdapter: IdGeneratorAdapter,
     ) {}
 
     async execute(createUserParams: CreateUserParams) {
@@ -22,7 +25,7 @@ export class CreateUserUseCase implements ICreateUserUseCase {
             throw new EmailAlreadyInUseError(createUserParams.email)
         }
 
-        const userId = uuidv4()
+        const userId = this.idGeneratorAdapter.execute()
 
         const hashedPassword = await this.passwordHasherAdapter.execute(
             createUserParams.password,

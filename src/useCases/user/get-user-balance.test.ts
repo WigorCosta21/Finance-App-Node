@@ -66,13 +66,20 @@ describe('GetUserBalanceUseCase', () => {
     it('should call GetUserByIdRepository with correct params', async () => {
         const { sut, getUserByIdRepository } = makeSut()
 
-        const getUserByIdRepositorySpy = jest.spyOn(
-            getUserByIdRepository,
-            'execute',
-        )
+        const executeSpy = jest.spyOn(getUserByIdRepository, 'execute')
 
         await sut.execute(userBalance.id)
 
-        expect(getUserByIdRepositorySpy).toHaveBeenCalledWith(userBalance.id)
+        expect(executeSpy).toHaveBeenCalledWith(userBalance.id)
+    })
+
+    it('should call GetUserBalanceRepository with correct params', async () => {
+        const { sut, getUserBalanceRepository } = makeSut()
+
+        const executeSpy = jest.spyOn(getUserBalanceRepository, 'execute')
+
+        await sut.execute(userBalance.id)
+
+        expect(executeSpy).toHaveBeenCalledWith(userBalance.id)
     })
 })

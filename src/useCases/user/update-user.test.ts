@@ -13,6 +13,13 @@ describe('UpdateUserUseCase', () => {
         password: faker.internet.password(),
     }
 
+    const updateUserParams = {
+        first_name: user.first_name,
+        last_name: user.last_name,
+        email: user.email,
+        password: user.password,
+    }
+
     class UpdateUserRepositoryStub {
         async execute() {
             return user
@@ -113,13 +120,6 @@ describe('UpdateUserUseCase', () => {
             'execute',
         )
 
-        const updateUserParams = {
-            first_name: user.first_name,
-            last_name: user.last_name,
-            email: user.email,
-            password: user.password,
-        }
-
         await sut.execute(user.id, updateUserParams)
 
         expect(updateUserRepositorySpy).toHaveBeenCalledWith(user.id, {
@@ -152,6 +152,18 @@ describe('UpdateUserUseCase', () => {
         const promise = sut.execute(user.id, {
             password: user.password,
         })
+
+        await expect(promise).rejects.toThrow()
+    })
+
+    it('should throw if UpdateUserRepository throws', async () => {
+        const { sut, updateUserRepository } = makeSut()
+
+        jest.spyOn(updateUserRepository, 'execute').mockRejectedValue(
+            new Error(),
+        )
+
+        const promise = sut.execute(user.id, updateUserParams)
 
         await expect(promise).rejects.toThrow()
     })

@@ -8,6 +8,7 @@ describe('UpdateUserUseCase', () => {
         first_name: faker.person.firstName(),
         last_name: faker.person.lastName(),
         email: faker.internet.email(),
+        password: faker.internet.password(),
     }
 
     class UpdateUserRepositoryStub {
@@ -70,6 +71,21 @@ describe('UpdateUserUseCase', () => {
         })
 
         expect(getUserByEmailRepositorySpy).toHaveBeenCalledWith(user.email)
+        expect(result).toBe(user)
+    })
+
+    it('should UpdateUserUseCase successfully (with password)', async () => {
+        const { sut, passwordHasherAdapter } = makeSut()
+        const passwordHasherAdapterSpy = jest.spyOn(
+            passwordHasherAdapter,
+            'execute',
+        )
+
+        const result = await sut.execute(user.id, {
+            password: user.password,
+        })
+
+        expect(passwordHasherAdapterSpy).toHaveBeenCalledWith(user.password)
         expect(result).toBe(user)
     })
 })

@@ -32,12 +32,24 @@ describe('GetUserByIdUseCase', () => {
         expect(result).toEqual(user)
     })
 
-    it('should call GetUserByIdRepository with correct paramss', async () => {
+    it('should call GetUserByIdRepository with correct params', async () => {
         const { sut, getUserByIdRepository } = makeSut()
 
         const executeSpy = jest.spyOn(getUserByIdRepository, 'execute')
         await sut.execute(user.id)
 
         expect(executeSpy).toHaveBeenCalledWith(user.id)
+    })
+
+    it('should throws if GetUserByIdRepository throws', async () => {
+        const { sut, getUserByIdRepository } = makeSut()
+
+        jest.spyOn(getUserByIdRepository, 'execute').mockRejectedValue(
+            new Error(),
+        )
+
+        const promise = sut.execute(user.id)
+
+        await expect(promise).rejects.toThrow()
     })
 })

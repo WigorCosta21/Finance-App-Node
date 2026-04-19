@@ -1,4 +1,5 @@
 import { faker } from '@faker-js/faker'
+import { jest } from '@jest/globals'
 import type { PublicUser } from '../../types/user.js'
 import { DeleteUserUseCase } from './delete-user.js'
 
@@ -29,5 +30,16 @@ describe('DeleteUserUseCase', () => {
         const deletedUser = await sut.execute(user.id)
 
         expect(deletedUser).toEqual(user)
+    })
+
+    it('should call DeleteUserRepository with correct params', async () => {
+        const { sut, deleteUserRepository } = makeSut()
+
+        const executeSpy = jest.spyOn(deleteUserRepository, 'execute')
+        const userId = user.id
+
+        await sut.execute(userId)
+
+        expect(executeSpy).toHaveBeenCalledWith(userId)
     })
 })

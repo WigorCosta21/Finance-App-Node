@@ -3,8 +3,9 @@ import type { ICreateTransactionRepository } from '../../repositories/interfaces
 import type { IGetUserByIdRepository } from '../../repositories/interfaces/user/get-user-by-id.js'
 import type { CreateTransactionParams } from '../../types/transaction.js'
 import type { IdGeneratorAdapter } from '../../adapters/index.js'
+import type { ICreateTransactionUseCase } from '../interfaces/transaction/create-transaction.js'
 
-export class CreateTransactionUseCase {
+export class CreateTransactionUseCase implements ICreateTransactionUseCase {
     constructor(
         private createTransactionRepository: ICreateTransactionRepository,
         private getUserByIdRepository: IGetUserByIdRepository,

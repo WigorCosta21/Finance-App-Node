@@ -1,4 +1,5 @@
 import { faker } from '@faker-js/faker'
+import { jest } from '@jest/globals'
 import type { Transaction } from '../../types/transaction.js'
 import { DeleteTransactionUseCase } from './delete-transaction.js'
 
@@ -12,7 +13,7 @@ describe('DeleteTransactionUseCase', () => {
         type: 'EARNING',
     }
 
-    class DeleteTransactionUseCaseStup {
+    class DeleteTransactionRepositoryStup {
         async execute(transactionId: string): Promise<Transaction | null> {
             return {
                 ...transaction,
@@ -22,13 +23,14 @@ describe('DeleteTransactionUseCase', () => {
     }
 
     const makeSut = () => {
-        const deleteTransactionUseCase = new DeleteTransactionUseCaseStup()
+        const deleteTransactionRepository =
+            new DeleteTransactionRepositoryStup()
 
-        const sut = new DeleteTransactionUseCase(deleteTransactionUseCase)
+        const sut = new DeleteTransactionUseCase(deleteTransactionRepository)
 
         return {
             sut,
-            deleteTransactionUseCase,
+            deleteTransactionRepository,
         }
     }
 
@@ -41,5 +43,20 @@ describe('DeleteTransactionUseCase', () => {
             ...transaction,
             id: transaction.id,
         })
+    })
+
+    it('should call DeleteTransactionRepository with correct params', async () => {
+        const { sut, deleteTransactionRepository } = makeSut()
+
+        const deleteTransactionRepositorySpy = jest.spyOn(
+            deleteTransactionRepository,
+            'execute',
+        )
+
+        await sut.execute(transaction.id)
+
+        expect(deleteTransactionRepositorySpy).toHaveBeenCalledWith(
+            transaction.id,
+        )
     })
 })

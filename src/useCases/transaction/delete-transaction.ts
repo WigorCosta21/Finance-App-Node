@@ -1,6 +1,6 @@
 import type { IDeleteTransactionRepository } from '../../repositories/interfaces/transaction/delete-transaction.js'
 
-export class DeleteTransactionUseCase {
+export class DeleteTransactionUseCase implements DeleteTransactionUseCase {
     constructor(
         private deleteTransactionRepository: IDeleteTransactionRepository,
     ) {}

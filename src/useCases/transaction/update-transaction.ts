@@ -1,7 +1,8 @@
 import type { IUpdateTransactionRepository } from '../../repositories/interfaces/transaction/update-transactions.js'
 import type { UpdateTransactionParams } from '../../types/transaction.js'
+import type { IUpdateTransactionUseCase } from '../interfaces/transaction/update-transaction.js'
 
-export class UpdateTransactionUseCase {
+export class UpdateTransactionUseCase implements IUpdateTransactionUseCase {
     constructor(
         private updateTransactionRepository: IUpdateTransactionRepository,
     ) {}

@@ -1,6 +1,8 @@
 import { faker } from '@faker-js/faker'
-import type { User } from '../../types/user.js'
+import { jest } from '@jest/globals'
+import type { PublicUser, User } from '../../types/user.js'
 import { GetTransactionsByUserIdUseCase } from './get-transactions-by-user-id.js'
+import { UserNotFoundError } from '../../errors/user.js'
 describe('GetTransactionByUserIdUseCase', () => {
     const user: User = {
         id: faker.string.uuid(),
@@ -17,7 +19,7 @@ describe('GetTransactionByUserIdUseCase', () => {
     }
 
     class GetUsetByIdRepositoryStub {
-        async execute() {
+        async execute(): Promise<PublicUser | null> {
             return user
         }
     }
@@ -45,5 +47,15 @@ describe('GetTransactionByUserIdUseCase', () => {
         const result = await sut.execute(user.id)
 
         expect(result).toEqual([])
+    })
+
+    it('shout throw UserNotFoundError if user does not exist', async () => {
+        const { sut, getUsetByIdRepository } = makeSut()
+
+        jest.spyOn(getUsetByIdRepository, 'execute').mockResolvedValueOnce(null)
+
+        const promise = sut.execute(user.id)
+
+        await expect(promise).rejects.toThrow(new UserNotFoundError(user.id))
     })
 })

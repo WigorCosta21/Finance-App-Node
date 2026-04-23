@@ -6,17 +6,15 @@ import type {
     TransactionIdParams,
 } from '../../types/transaction.js'
 import { DeleteTransactionController } from './delete-transaction.js'
+import { makeTransactionParams } from '../../tests/fixtures/index.js'
 
 describe('DeleteTransactionController', () => {
+    const transaction = makeTransactionParams()
     class DeleteTransactionUseCaseStub {
         async execute(transactionId: string): Promise<Transaction | null> {
             return {
                 id: transactionId,
-                user_id: faker.string.uuid(),
-                name: faker.commerce.productName(),
-                date: faker.date.anytime.toString(),
-                amount: Number(faker.finance.amount()),
-                type: 'EARNING',
+                ...transaction,
             }
         }
     }

@@ -1,24 +1,20 @@
 import type { Request } from 'express'
-import { faker } from '@faker-js/faker'
 import { jest } from '@jest/globals'
 import type {
     CreateTransactionParams,
     Transaction,
 } from '../../types/transaction.js'
 import { CreateTransactionController } from './create-transaction.js'
+import { makeTransactionParams } from '../../tests/fixtures/index.js'
 
 describe('CreateTransactionController', () => {
+    const transaction = makeTransactionParams()
+
     class CreateTransactionUseCaseStub {
-        async execute(
-            transaction: CreateTransactionParams,
-        ): Promise<Transaction> {
+        async execute(): Promise<Transaction> {
             return {
-                id: faker.string.uuid(),
-                user_id: faker.string.uuid(),
-                name: transaction.name,
-                date: transaction.date,
-                amount: transaction.amount,
-                type: transaction.type,
+                id: 'generared_id',
+                ...transaction,
             }
         }
     }
@@ -31,16 +27,6 @@ describe('CreateTransactionController', () => {
         return { createTransactionUseCase, sut }
     }
 
-    const makeHttpRequestBody = () => {
-        return {
-            user_id: faker.string.uuid(),
-            name: faker.commerce.productName(),
-            date: faker.date.recent().toISOString(),
-            type: 'EARNING',
-            amount: Number(faker.finance.amount()),
-        }
-    }
-
     const makeHttpRequest = (body: unknown) =>
         ({
             body,
@@ -49,7 +35,7 @@ describe('CreateTransactionController', () => {
     it('should return 201 when creating transaction (expense)', async () => {
         const { sut } = makeSut()
 
-        const result = await sut.execute(makeHttpRequest(makeHttpRequestBody()))
+        const result = await sut.execute(makeHttpRequest(transaction))
 
         expect(result.statusCode).toBe(201)
     })
@@ -58,7 +44,7 @@ describe('CreateTransactionController', () => {
         const { sut } = makeSut()
 
         const result = await sut.execute(
-            makeHttpRequest({ ...makeHttpRequestBody(), type: 'EARNING' }),
+            makeHttpRequest({ ...transaction, type: 'EARNING' }),
         )
 
         expect(result.statusCode).toBe(201)
@@ -68,7 +54,7 @@ describe('CreateTransactionController', () => {
         const { sut } = makeSut()
 
         const result = await sut.execute(
-            makeHttpRequest({ ...makeHttpRequestBody(), type: 'INVESTMENT' }),
+            makeHttpRequest({ ...transaction, type: 'INVESTMENT' }),
         )
 
         expect(result.statusCode).toBe(201)
@@ -78,7 +64,7 @@ describe('CreateTransactionController', () => {
         const { sut } = makeSut()
 
         const result = await sut.execute(
-            makeHttpRequest({ ...makeHttpRequestBody(), user_id: undefined }),
+            makeHttpRequest({ ...transaction, user_id: undefined }),
         )
 
         expect(result.statusCode).toBe(400)
@@ -88,7 +74,7 @@ describe('CreateTransactionController', () => {
         const { sut } = makeSut()
 
         const result = await sut.execute(
-            makeHttpRequest({ ...makeHttpRequestBody(), name: undefined }),
+            makeHttpRequest({ ...transaction, name: undefined }),
         )
 
         expect(result.statusCode).toBe(400)
@@ -98,7 +84,7 @@ describe('CreateTransactionController', () => {
         const { sut } = makeSut()
 
         const result = await sut.execute(
-            makeHttpRequest({ ...makeHttpRequestBody(), date: undefined }),
+            makeHttpRequest({ ...transaction, date: undefined }),
         )
 
         expect(result.statusCode).toBe(400)
@@ -108,7 +94,7 @@ describe('CreateTransactionController', () => {
         const { sut } = makeSut()
 
         const result = await sut.execute(
-            makeHttpRequest({ ...makeHttpRequestBody(), type: undefined }),
+            makeHttpRequest({ ...transaction, type: undefined }),
         )
 
         expect(result.statusCode).toBe(400)
@@ -118,7 +104,7 @@ describe('CreateTransactionController', () => {
         const { sut } = makeSut()
 
         const result = await sut.execute(
-            makeHttpRequest({ ...makeHttpRequestBody(), amount: undefined }),
+            makeHttpRequest({ ...transaction, amount: undefined }),
         )
 
         expect(result.statusCode).toBe(400)
@@ -127,7 +113,7 @@ describe('CreateTransactionController', () => {
         const { sut } = makeSut()
 
         const result = await sut.execute(
-            makeHttpRequest({ ...makeHttpRequestBody(), date: 'invalid_date' }),
+            makeHttpRequest({ ...transaction, date: 'invalid_date' }),
         )
 
         expect(result.statusCode).toBe(400)
@@ -137,7 +123,7 @@ describe('CreateTransactionController', () => {
         const { sut } = makeSut()
 
         const result = await sut.execute(
-            makeHttpRequest({ ...makeHttpRequestBody(), type: 'invalid_type' }),
+            makeHttpRequest({ ...transaction, type: 'invalid_type' }),
         )
 
         expect(result.statusCode).toBe(400)
@@ -148,7 +134,7 @@ describe('CreateTransactionController', () => {
 
         const result = await sut.execute(
             makeHttpRequest({
-                ...makeHttpRequestBody(),
+                ...transaction,
                 amount: 'invalid_amount',
             }),
         )
@@ -163,7 +149,7 @@ describe('CreateTransactionController', () => {
             new Error(),
         )
 
-        const result = await sut.execute(makeHttpRequest(makeHttpRequestBody()))
+        const result = await sut.execute(makeHttpRequest(transaction))
 
         expect(result.statusCode).toBe(500)
     })
@@ -173,7 +159,7 @@ describe('CreateTransactionController', () => {
 
         const executeSpy = jest.spyOn(createTransactionUseCase, 'execute')
 
-        const body = makeHttpRequestBody()
+        const body = transaction
         const httpRequest = makeHttpRequest(body)
 
         await sut.execute(httpRequest)

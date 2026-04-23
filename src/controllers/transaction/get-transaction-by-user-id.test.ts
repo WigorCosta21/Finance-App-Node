@@ -5,18 +5,13 @@ import type { Transaction } from '../../types/transaction.js'
 import { GetTransactionsByUserIdController } from './get-transactions-by-user-id.js'
 import type { UserIdQuery } from '../../types/user.js'
 import { UserNotFoundError } from '../../errors/user.js'
+import { makeTransaction } from '../../tests/fixtures/index.js'
 
 describe('GetTransactionByUserIdController', () => {
+    const transaction = makeTransaction()
     class GetTransactionByUserIdUseCaseStub {
-        async execute(): Promise<Transaction | null> {
-            return {
-                id: faker.string.uuid(),
-                user_id: faker.string.uuid(),
-                name: faker.commerce.productName(),
-                date: faker.date.anytime.toString(),
-                amount: Number(faker.finance.amount()),
-                type: 'EARNING',
-            }
+        async execute(): Promise<Transaction[] | null> {
+            return [transaction]
         }
     }
 

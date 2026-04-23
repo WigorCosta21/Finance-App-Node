@@ -7,6 +7,7 @@ import type {
     UpdateTransactionParams,
 } from '../../types/transaction.js'
 import { UpdateTransactionController } from './update-transaction.js'
+import { makeTransaction } from '../../tests/fixtures/index.js'
 
 describe('UpdateTransactionController', () => {
     class UpdateTransactionUseCaseStub {
@@ -14,20 +15,7 @@ describe('UpdateTransactionController', () => {
             _transactionId: string,
             updateTransactionParams: UpdateTransactionParams,
         ): Promise<Transaction | null> {
-            return {
-                id: faker.string.uuid(),
-                user_id: faker.string.uuid(),
-                name:
-                    updateTransactionParams.name ??
-                    faker.commerce.productName(),
-                date:
-                    updateTransactionParams.date ??
-                    faker.date.anytime.toString(),
-                amount:
-                    updateTransactionParams.amount ??
-                    Number(faker.finance.amount()),
-                type: updateTransactionParams.type ?? 'EARNING',
-            }
+            return makeTransaction(updateTransactionParams)
         }
     }
 

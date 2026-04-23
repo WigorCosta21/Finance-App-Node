@@ -1,16 +1,11 @@
-import { faker } from '@faker-js/faker'
 import { jest } from '@jest/globals'
 import type { PublicUser, User } from '../../types/user.js'
 import { GetTransactionsByUserIdUseCase } from './get-transactions-by-user-id.js'
 import { UserNotFoundError } from '../../errors/user.js'
+import { makeUser } from '../../tests/fixtures/index.js'
+
 describe('GetTransactionByUserIdUseCase', () => {
-    const user: User = {
-        id: faker.string.uuid(),
-        first_name: faker.person.firstName(),
-        last_name: faker.person.lastName(),
-        email: faker.internet.email(),
-        password: faker.internet.password(),
-    }
+    const user: User = makeUser()
 
     class GetTransactionByIdUserIdRepositoryStub {
         async execute() {

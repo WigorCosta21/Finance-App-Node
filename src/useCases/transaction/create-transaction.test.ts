@@ -1,30 +1,14 @@
-import { faker } from '@faker-js/faker'
 import { jest } from '@jest/globals'
 import { CreateTransactionUseCase } from './create-transaction.js'
-import type {
-    CreateTransactionParams,
-    Transaction,
-} from '../../types/transaction.js'
+import type { Transaction } from '../../types/transaction.js'
 import { UserNotFoundError } from '../../errors/user.js'
-import type { PublicUser } from '../../types/user.js'
+import type { PublicUser, User } from '../../types/user.js'
+import { makeTransaction, makeUser } from '../../tests/fixtures/index.js'
 
 describe('CreateTransactionUseCase', () => {
-    const createTransactionParams: CreateTransactionParams = {
-        user_id: faker.string.uuid(),
-        name: faker.commerce.productName(),
-        date: faker.date.anytime().toString(),
-        amount: Number(faker.finance.amount()),
-        type: 'EARNING',
-    }
+    const transaction: Transaction = makeTransaction()
 
-    const user = {
-        id: faker.string.uuid(),
-        first_name: faker.person.firstName(),
-        last_name: faker.person.lastName(),
-        email: faker.internet.email(),
-        password: faker.internet.password(),
-    }
-
+    const user: User = makeUser()
     class CreateTransactionRepositotyStub {
         async execute(transaction: Transaction) {
             return transaction
@@ -69,10 +53,10 @@ describe('CreateTransactionUseCase', () => {
     it('should create transaction successfully', async () => {
         const { sut } = makeSut()
 
-        const result = await sut.execute(createTransactionParams)
+        const result = await sut.execute(transaction)
 
         expect(result).toEqual({
-            ...createTransactionParams,
+            ...transaction,
             id: 'generated_id',
         })
     })
@@ -85,10 +69,10 @@ describe('CreateTransactionUseCase', () => {
             'execute',
         )
 
-        await sut.execute(createTransactionParams)
+        await sut.execute(transaction)
 
         expect(getUserByIdRepositorySpy).toHaveBeenCalledWith(
-            createTransactionParams.user_id,
+            transaction.user_id,
         )
     })
 
@@ -97,7 +81,7 @@ describe('CreateTransactionUseCase', () => {
 
         const idGeneratorAdapterSpy = jest.spyOn(idGeneratorAdapter, 'execute')
 
-        await sut.execute(createTransactionParams)
+        await sut.execute(transaction)
 
         expect(idGeneratorAdapterSpy).toHaveBeenCalled()
     })
@@ -110,10 +94,10 @@ describe('CreateTransactionUseCase', () => {
             'execute',
         )
 
-        await sut.execute(createTransactionParams)
+        await sut.execute(transaction)
 
         expect(createTransactionRepositotySpy).toHaveBeenCalledWith({
-            ...createTransactionParams,
+            ...transaction,
             id: 'generated_id',
         })
     })
@@ -123,10 +107,10 @@ describe('CreateTransactionUseCase', () => {
 
         jest.spyOn(getUserByIdRepository, 'execute').mockResolvedValueOnce(null)
 
-        const promise = sut.execute(createTransactionParams)
+        const promise = sut.execute(transaction)
 
         await expect(promise).rejects.toThrow(
-            new UserNotFoundError(createTransactionParams.user_id),
+            new UserNotFoundError(transaction.user_id),
         )
     })
     it('should throw if GetUserByIdRepository throws ', async () => {
@@ -136,7 +120,7 @@ describe('CreateTransactionUseCase', () => {
             new Error(),
         )
 
-        const promise = sut.execute(createTransactionParams)
+        const promise = sut.execute(transaction)
 
         await expect(promise).rejects.toThrow()
     })
@@ -148,7 +132,7 @@ describe('CreateTransactionUseCase', () => {
             throw new Error()
         })
 
-        const promise = sut.execute(createTransactionParams)
+        const promise = sut.execute(transaction)
 
         await expect(promise).rejects.toThrow()
     })
@@ -160,7 +144,7 @@ describe('CreateTransactionUseCase', () => {
             'execute',
         ).mockRejectedValueOnce(new Error())
 
-        const promise = sut.execute(createTransactionParams)
+        const promise = sut.execute(transaction)
 
         await expect(promise).rejects.toThrow()
     })

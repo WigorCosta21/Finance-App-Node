@@ -1,22 +1,15 @@
-import { faker } from '@faker-js/faker'
 import { jest } from '@jest/globals'
 import type { Transaction } from '../../types/transaction.js'
 import { DeleteTransactionUseCase } from './delete-transaction.js'
+import { makeTransaction } from '../../tests/fixtures/index.js'
 
 describe('DeleteTransactionUseCase', () => {
-    const transaction: Transaction = {
-        id: faker.string.uuid(),
-        user_id: faker.string.uuid(),
-        name: faker.commerce.productName(),
-        date: faker.date.anytime().toString(),
-        amount: Number(faker.finance.amount()),
-        type: 'EARNING',
-    }
+    const transactionData = makeTransaction()
 
     class DeleteTransactionRepositoryStup {
         async execute(transactionId: string): Promise<Transaction | null> {
             return {
-                ...transaction,
+                ...transactionData,
                 id: transactionId,
             }
         }
@@ -37,11 +30,11 @@ describe('DeleteTransactionUseCase', () => {
     it('should delete transaction successfully', async () => {
         const { sut } = makeSut()
 
-        const result = await sut.execute(transaction.id)
+        const result = await sut.execute(transactionData.id)
 
         expect(result).toEqual({
-            ...transaction,
-            id: transaction.id,
+            ...transactionData,
+            id: transactionData.id,
         })
     })
 
@@ -53,10 +46,10 @@ describe('DeleteTransactionUseCase', () => {
             'execute',
         )
 
-        await sut.execute(transaction.id)
+        await sut.execute(transactionData.id)
 
         expect(deleteTransactionRepositorySpy).toHaveBeenCalledWith(
-            transaction.id,
+            transactionData.id,
         )
     })
     it('should throw if DeleteTransactionRepository throws', async () => {
@@ -67,7 +60,7 @@ describe('DeleteTransactionUseCase', () => {
             'execute',
         ).mockRejectedValueOnce(new Error())
 
-        const promisse = sut.execute(transaction.id)
+        const promisse = sut.execute(transactionData.id)
 
         await expect(promisse).rejects.toThrow()
     })

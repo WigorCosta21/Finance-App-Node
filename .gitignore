@@ -3,9 +3,11 @@ node_modules
 
 # Enviroment variables
 /postgres-data
+/postgres-test-data
 
 #Postgres volume
 .env
+.env.test
 
 /generated
 

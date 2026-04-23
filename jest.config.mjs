@@ -11,6 +11,7 @@ export default {
     clearMocks: true,
     coverageProvider: 'v8',
     collectCoverageFrom: ['src/**/*.ts'],
+    globalSetup: '<rootDir>/jest.global-setup.mjs',
     testEnvironment: 'node',
     testMatch: ['<rootDir>/src/**/*.test.ts'],
     moduleNameMapper: {

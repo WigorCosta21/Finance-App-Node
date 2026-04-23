@@ -2,13 +2,13 @@ import { jest } from '@jest/globals'
 import { CreateTransactionUseCase } from './create-transaction.js'
 import type { Transaction } from '../../types/transaction.js'
 import { UserNotFoundError } from '../../errors/user.js'
-import type { PublicUser, User } from '../../types/user.js'
+import type { PublicUser } from '../../types/user.js'
 import { makeTransaction, makeUser } from '../../tests/fixtures/index.js'
 
 describe('CreateTransactionUseCase', () => {
     const transaction: Transaction = makeTransaction()
 
-    const user: User = makeUser()
+    const user = makeUser()
     class CreateTransactionRepositotyStub {
         async execute(transaction: Transaction) {
             return transaction

@@ -1,23 +1,13 @@
-import { faker } from '@faker-js/faker'
 import { jest } from '@jest/globals'
 import { GetUserBalanceUseCase } from './get-user-balance.js'
 import { UserNotFoundError } from '../../errors/user.js'
 import type { PublicUser } from '../../types/user.js'
+import { makeBalance, makeUser } from '../../tests/fixtures/index.js'
 
 describe('GetUserBalanceUseCase', () => {
-    const userBalance = {
-        id: faker.string.uuid(),
-        first_name: faker.person.firstName(),
-        last_name: faker.person.lastName(),
-        email: faker.internet.email(),
-    }
+    const userBalance = makeUser()
 
-    const balance = {
-        balance: faker.number.int(),
-        earnings: faker.number.int(),
-        expenses: faker.number.int(),
-        investments: faker.number.int(),
-    }
+    const balance = makeBalance()
 
     class GetUserBalanceRepositoryStub {
         async execute() {

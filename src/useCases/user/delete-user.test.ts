@@ -1,14 +1,9 @@
-import { faker } from '@faker-js/faker'
 import { jest } from '@jest/globals'
 import type { PublicUser } from '../../types/user.js'
 import { DeleteUserUseCase } from './delete-user.js'
+import { makeUser } from '../../tests/fixtures/index.js'
 
-const user = {
-    id: faker.string.uuid(),
-    first_name: faker.person.firstName(),
-    last_name: faker.person.lastName(),
-    email: faker.internet.email(),
-}
+const user = makeUser()
 describe('DeleteUserUseCase', () => {
     class DeleteUserRepositoryStub {
         async execute(): Promise<PublicUser | null> {

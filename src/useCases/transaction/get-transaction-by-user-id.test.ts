@@ -1,11 +1,11 @@
 import { jest } from '@jest/globals'
-import type { PublicUser, User } from '../../types/user.js'
+import type { PublicUser } from '../../types/user.js'
 import { GetTransactionsByUserIdUseCase } from './get-transactions-by-user-id.js'
 import { UserNotFoundError } from '../../errors/user.js'
 import { makeUser } from '../../tests/fixtures/index.js'
 
 describe('GetTransactionByUserIdUseCase', () => {
-    const user: User = makeUser()
+    const user = makeUser()
 
     class GetTransactionByIdUserIdRepositoryStub {
         async execute() {

@@ -3,6 +3,7 @@ import { jest } from '@jest/globals'
 import type { CreateUserParams, PublicUser } from '../../types/user.js'
 import { CreateUserUseCase } from './create-user.js'
 import { EmailAlreadyInUseError } from '../../errors/user.js'
+import { makeUserParams } from '../../tests/fixtures/index.js'
 describe('CreateUserUseCase', () => {
     class GetUserByEmailRepositoryStub {
         async execute(): Promise<PublicUser | null> {
@@ -55,12 +56,7 @@ describe('CreateUserUseCase', () => {
         }
     }
 
-    const makeHttpRequestBody = () => ({
-        first_name: faker.person.firstName(),
-        last_name: faker.person.lastName(),
-        email: faker.internet.email(),
-        password: faker.internet.password({ length: 7 }),
-    })
+    const makeHttpRequestBody = () => makeUserParams()
 
     it('should successfully create a user', async () => {
         const { sut } = makeSut()

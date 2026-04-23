@@ -3,21 +3,17 @@ import { jest } from '@jest/globals'
 import { UpdateUserUseCase } from './update-user.js'
 import { EmailAlreadyInUseError } from '../../errors/user.js'
 import type { PublicUser } from '../../types/user.js'
+import { makeUser } from '../../tests/fixtures/index.js'
 
 describe('UpdateUserUseCase', () => {
-    const user = {
-        id: faker.string.uuid(),
-        first_name: faker.person.firstName(),
-        last_name: faker.person.lastName(),
-        email: faker.internet.email(),
-        password: faker.internet.password(),
-    }
+    const user = makeUser()
+    const passwordParams = 'password_test'
 
     const updateUserParams = {
         first_name: user.first_name,
         last_name: user.last_name,
         email: user.email,
-        password: user.password,
+        password: passwordParams,
     }
 
     class UpdateUserRepositoryStub {
@@ -91,10 +87,10 @@ describe('UpdateUserUseCase', () => {
         )
 
         const result = await sut.execute(user.id, {
-            password: user.password,
+            password: passwordParams,
         })
 
-        expect(passwordHasherAdapterSpy).toHaveBeenCalledWith(user.password)
+        expect(passwordHasherAdapterSpy).toHaveBeenCalledWith(passwordParams)
         expect(result).toBe(user)
     })
 
@@ -150,7 +146,7 @@ describe('UpdateUserUseCase', () => {
         )
 
         const promise = sut.execute(user.id, {
-            password: user.password,
+            password: passwordParams,
         })
 
         await expect(promise).rejects.toThrow()

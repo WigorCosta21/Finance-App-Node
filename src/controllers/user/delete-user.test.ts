@@ -3,16 +3,13 @@ import { faker } from '@faker-js/faker'
 import { jest } from '@jest/globals'
 import { DeleteUserController } from './delete-user.js'
 import type { PublicUser, UserIdParams } from '../../types/user.js'
+import { makeUser } from '../../tests/fixtures/index.js'
 
 describe('Delete User Controller', () => {
+    const user = makeUser()
     class DeleteUserUseCaseStub {
         async execute(): Promise<PublicUser | null> {
-            return {
-                id: faker.string.uuid(),
-                first_name: faker.person.firstName(),
-                last_name: faker.person.lastName(),
-                email: faker.internet.email(),
-            }
+            return user
         }
     }
 

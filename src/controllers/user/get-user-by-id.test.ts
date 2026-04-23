@@ -3,16 +3,13 @@ import { faker } from '@faker-js/faker'
 import { jest } from '@jest/globals'
 import { GetUserByIdController } from './get-user-by-id.js'
 import type { PublicUser, UserIdParams } from '../../types/user.js'
+import { makeUser } from '../../tests/fixtures/user.js'
 
 describe('GetUserByIdController', () => {
+    const user = makeUser()
     class GetUserByIdUseCasesut {
         async execute(): Promise<PublicUser | null> {
-            return {
-                id: faker.string.uuid(),
-                first_name: faker.person.firstName(),
-                last_name: faker.person.lastName(),
-                email: faker.internet.email(),
-            }
+            return user
         }
     }
 

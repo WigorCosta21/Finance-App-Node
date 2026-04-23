@@ -8,6 +8,7 @@ import type {
     UserIdParams,
 } from '../../types/user.js'
 import { EmailAlreadyInUseError } from '../../errors/user.js'
+import { makeUser } from '../../tests/fixtures/user.js'
 
 describe('UpdateUserController', () => {
     class UpdateUserUseCaseStub {
@@ -15,14 +16,7 @@ describe('UpdateUserController', () => {
             _userId: string,
             updateUserParams: UpdateUserParams,
         ): Promise<PublicUser | null> {
-            return {
-                id: faker.string.uuid(),
-                first_name:
-                    updateUserParams.first_name ?? faker.person.firstName(),
-                last_name:
-                    updateUserParams.last_name ?? faker.person.lastName(),
-                email: updateUserParams.email ?? faker.internet.email(),
-            }
+            return makeUser(updateUserParams)
         }
     }
 

@@ -5,16 +5,13 @@ import { GetUserBalanceController } from './get-user-balance.js'
 import type { UserBalance, UserIdParams } from '../../types/user.js'
 import type { IGetUserBalanceUseCase } from '../../useCases/interfaces/user/get-user-balance.js'
 import { UserNotFoundError } from '../../errors/user.js'
+import { makeBalance } from '../../tests/fixtures/index.js'
 
 describe('GetUserBalanceController', () => {
+    const balance = makeBalance()
     class GetUserBalanceUseCaseStub implements IGetUserBalanceUseCase {
         async execute(): Promise<UserBalance> {
-            return {
-                balance: faker.number.int(),
-                earnings: faker.number.int(),
-                expenses: faker.number.int(),
-                investments: faker.number.int(),
-            }
+            return balance
         }
     }
 

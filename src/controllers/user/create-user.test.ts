@@ -1,20 +1,20 @@
 import type { Request } from 'express'
-import { faker } from '@faker-js/faker'
 import { jest } from '@jest/globals'
 
 import type { CreateUserParams, PublicUser } from '../../types/user.js'
 import { CreateUserController } from './create-user.js'
 import { EmailAlreadyInUseError } from '../../errors/user.js'
+import { makeUser, makeUserParams } from '../../tests/fixtures/index.js'
 
 describe('Create User Controller', () => {
+    const user = makeUserParams()
     class CreateUserUseCaseStub {
-        async execute(user: CreateUserParams): Promise<PublicUser> {
-            return {
-                id: '123',
+        async execute(): Promise<PublicUser> {
+            return makeUser({
                 first_name: user.first_name,
                 last_name: user.last_name,
                 email: user.email,
-            }
+            })
         }
     }
 
@@ -25,12 +25,6 @@ describe('Create User Controller', () => {
 
         return { createUserUseCaseSub, sut }
     }
-    const makeHttpRequestBody = () => ({
-        first_name: faker.person.firstName(),
-        last_name: faker.person.lastName(),
-        email: faker.internet.email(),
-        password: faker.internet.password({ length: 7 }),
-    })
 
     const makeHttpRequest = (body: unknown) =>
         ({
@@ -40,7 +34,7 @@ describe('Create User Controller', () => {
     it('should return 201 when create a user successfully', async () => {
         const { sut } = makeSut()
 
-        const result = await sut.execute(makeHttpRequest(makeHttpRequestBody()))
+        const result = await sut.execute(makeHttpRequest(user))
 
         expect(result.statusCode).toBe(201)
         expect(result.body).not.toBeNull()
@@ -51,7 +45,7 @@ describe('Create User Controller', () => {
 
         const result = await sut.execute(
             makeHttpRequest({
-                ...makeHttpRequestBody(),
+                ...user,
                 first_name: null,
             }),
         )
@@ -63,7 +57,7 @@ describe('Create User Controller', () => {
 
         const result = await sut.execute(
             makeHttpRequest({
-                ...makeHttpRequestBody(),
+                ...user,
                 last_name: null,
             }),
         )
@@ -75,7 +69,7 @@ describe('Create User Controller', () => {
 
         const result = await sut.execute(
             makeHttpRequest({
-                ...makeHttpRequestBody(),
+                ...user,
                 email: null,
             }),
         )
@@ -87,7 +81,7 @@ describe('Create User Controller', () => {
 
         const result = await sut.execute(
             makeHttpRequest({
-                ...makeHttpRequestBody(),
+                ...user,
                 email: 'invalid_email',
             }),
         )
@@ -99,7 +93,7 @@ describe('Create User Controller', () => {
 
         const result = await sut.execute(
             makeHttpRequest({
-                ...makeHttpRequestBody(),
+                ...user,
                 password: null,
             }),
         )
@@ -111,7 +105,7 @@ describe('Create User Controller', () => {
 
         const result = await sut.execute(
             makeHttpRequest({
-                ...makeHttpRequestBody(),
+                ...user,
                 password: '123',
             }),
         )
@@ -124,7 +118,7 @@ describe('Create User Controller', () => {
 
         const executeSpy = jest.spyOn(createUserUseCaseSub, 'execute')
 
-        const httpRequest = makeHttpRequest(makeHttpRequestBody())
+        const httpRequest = makeHttpRequest(user)
 
         await sut.execute(httpRequest)
 
@@ -140,7 +134,7 @@ describe('Create User Controller', () => {
             },
         )
 
-        const httpRequest = makeHttpRequest(makeHttpRequestBody())
+        const httpRequest = makeHttpRequest(user)
 
         const result = await sut.execute(httpRequest)
 
@@ -150,7 +144,7 @@ describe('Create User Controller', () => {
     it('should return 500 if CreateUserUseCase throws EmailAlreadyInUseError', async () => {
         const { sut, createUserUseCaseSub } = makeSut()
 
-        const httpRequest = makeHttpRequest(makeHttpRequestBody())
+        const httpRequest = makeHttpRequest(user)
 
         jest.spyOn(createUserUseCaseSub, 'execute').mockImplementationOnce(
             () => {

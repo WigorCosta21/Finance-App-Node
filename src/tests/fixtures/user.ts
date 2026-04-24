@@ -10,8 +10,9 @@ export const makeUser = (override?: Partial<PublicUser>): PublicUser => ({
 })
 
 export const makeUserParams = (
-    override?: Partial<CreateUserParams>,
-): CreateUserParams => ({
+    override?: Partial<CreateUserParams & { id: string }>,
+): CreateUserParams & { id: string } => ({
+    id: faker.string.uuid(),
     first_name: faker.person.firstName(),
     last_name: faker.person.lastName(),
     email: faker.internet.email(),

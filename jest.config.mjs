@@ -12,6 +12,7 @@ export default {
     coverageProvider: 'v8',
     collectCoverageFrom: ['src/**/*.ts'],
     globalSetup: '<rootDir>/jest.global-setup.mjs',
+    setupFilesAfterEnv: ['<rootDir>/jest.setup-after-env.ts'],
     testEnvironment: 'node',
     testMatch: ['<rootDir>/src/**/*.test.ts'],
     moduleNameMapper: {

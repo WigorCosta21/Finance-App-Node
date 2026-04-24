@@ -1,14 +1,9 @@
 import { prisma } from '../../../../prisma/prisma.js'
-import type {
-    CreateUserRepositoryParams,
-    PublicUser,
-} from '../../../types/user.js'
+import type { CreateUserParams, PublicUser } from '../../../types/user.js'
 import type { ICreateUserRepository } from '../../interfaces/user/create-user.js'
 
 export class PostgresCreateUserRepository implements ICreateUserRepository {
-    async execute(
-        createUserParams: CreateUserRepositoryParams,
-    ): Promise<PublicUser> {
+    async execute(createUserParams: CreateUserParams): Promise<PublicUser> {
         const user = await prisma.user.create({
             data: {
                 first_name: createUserParams.first_name,

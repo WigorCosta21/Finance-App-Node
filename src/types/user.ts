@@ -8,8 +8,6 @@ export interface User {
 
 export type CreateUserParams = Omit<User, 'id'>
 
-export type CreateUserRepositoryParams = User
-
 export type UpdateUserParams = Partial<Omit<User, 'id'>>
 
 export interface UserIdParams {

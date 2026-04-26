@@ -3,6 +3,13 @@ import { PostgresCreateUserRepository } from './create-user.js'
 import { makeUserParams } from '../../../tests/fixtures/index.js'
 import { prisma } from '../../../../prisma/prisma.js'
 describe('CreateUserRepository', () => {
+    let createdUser: Awaited<ReturnType<typeof prisma.user.create>>
+
+    beforeEach(async () => {
+        const user = makeUserParams()
+        createdUser = await prisma.user.create({ data: user })
+    })
+
     it('should create a user on db', async () => {
         const user = makeUserParams()
         const sut = new PostgresCreateUserRepository()
@@ -36,5 +43,13 @@ describe('CreateUserRepository', () => {
                 email: true,
             },
         })
+    })
+
+    it('should throw if Prisma throws', async () => {
+        const sut = new PostgresCreateUserRepository()
+
+        jest.spyOn(prisma.user, 'create').mockRejectedValueOnce(new Error())
+
+        await expect(sut.execute(createdUser)).rejects.toThrow()
     })
 })

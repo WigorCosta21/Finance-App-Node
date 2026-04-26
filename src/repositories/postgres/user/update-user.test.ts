@@ -5,7 +5,7 @@ import { makeUserParams } from '../../../tests/fixtures/user.js'
 import { PostgresUpdateUserRepository } from './update-user.js'
 import type { UpdateUserParams } from '../../../types/user.js'
 
-describe('GetUserByEmailRepository', () => {
+describe('UpdateUserRepository', () => {
     let fakerUser: Awaited<ReturnType<typeof prisma.user.create>>
 
     beforeEach(async () => {
@@ -49,5 +49,13 @@ describe('GetUserByEmailRepository', () => {
                 email: true,
             },
         })
+    })
+    it('should throw if Prisma throws', async () => {
+        const sut = new PostgresUpdateUserRepository()
+        jest.spyOn(prisma.user, 'update').mockRejectedValueOnce(new Error())
+
+        const promise = sut.execute(fakerUser.id, updateUserParams)
+
+        await expect(promise).rejects.toThrow()
     })
 })

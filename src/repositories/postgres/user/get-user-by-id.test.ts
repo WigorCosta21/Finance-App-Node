@@ -11,7 +11,7 @@ describe('GetUserByEmailRepository', () => {
         createdUser = await prisma.user.create({ data: user })
     })
 
-    it('should GetUserById on db', async () => {
+    it('should GetUserByIdReposistory on db', async () => {
         const sut = new PostgresGetUserByIdRepository()
 
         const result = await sut.execute(createdUser.id)

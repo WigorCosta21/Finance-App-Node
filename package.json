@@ -9,8 +9,8 @@
         "lint:fix": "eslint . --fix",
         "format:write": "prettier . --write",
         "migrations:run": "npx tsx src/db/postgres/migrations/exec.ts",
-        "test:dev": "set NODE_OPTIONS=--experimental-vm-modules && dotenv -e .env-test -- jest --watchAll --runInBand --silent",
-        "test:coverage": "set NODE_OPTIONS=--experimental-vm-modules && npx jest --coverage"
+        "test:dev": "set NODE_OPTIONS=--experimental-vm-modules && dotenv -e .env.test -- jest --watchAll --runInBand --silent",
+        "test:coverage": "set NODE_OPTIONS=--experimental-vm-modules && dotenv -e .env.test -- npx jest --coverage --runInBand"
     },
     "keywords": [],
     "author": "",

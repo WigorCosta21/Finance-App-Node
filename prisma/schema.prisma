@@ -26,7 +26,7 @@ model Transaction {
   amount Decimal @db.Decimal(10, 2)
   type TransactionType
   
-  user User @relation(fields: [user_id], references: [id])
+  user User @relation(fields: [user_id], references: [id], onDelete: Cascade)
 }
 
 enum TransactionType {

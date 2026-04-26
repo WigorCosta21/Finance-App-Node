@@ -3,7 +3,7 @@ import { prisma } from '../../../../prisma/prisma.js'
 import { makeUserParams } from '../../../tests/fixtures/user.js'
 import { PostgresGetUserByEmailRepository } from './get-user-by-email.js'
 
-describe('GetUserByEmail', () => {
+describe('GetUserByEmailRepository', () => {
     let createdUser: Awaited<ReturnType<typeof prisma.user.create>>
 
     beforeEach(async () => {
@@ -11,7 +11,7 @@ describe('GetUserByEmail', () => {
         createdUser = await prisma.user.create({ data: user })
     })
 
-    it('should GetUserByEmaul on db', async () => {
+    it('should GetUserByEmail on db', async () => {
         const sut = new PostgresGetUserByEmailRepository()
 
         const result = await sut.execute(createdUser.email)

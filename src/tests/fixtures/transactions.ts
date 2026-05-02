@@ -11,7 +11,10 @@ export const makeTransaction = (
     user_id: faker.string.uuid(),
     name: faker.commerce.productName(),
     date: faker.date.anytime().toISOString(),
-    amount: faker.number.int(),
+    amount: faker.number.int({
+        min: 100,
+        max: 10000,
+    }),
     type: 'EARNING',
     ...override,
 })

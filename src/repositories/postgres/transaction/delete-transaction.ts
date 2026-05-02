@@ -14,6 +14,7 @@ export class PostgresDeleteTransactionReposiroty implements IDeleteTransactionRe
             return {
                 ...transaction,
                 amount: transaction.amount.toNumber(),
+                date: transaction.date.toISOString(),
             }
         } catch {
             return null

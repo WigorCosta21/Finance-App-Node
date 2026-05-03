@@ -20,6 +20,7 @@ export class PostgresUpdateTransactionRepository implements IUpdateTransactionRe
         return {
             ...updatedTransactions,
             amount: updatedTransactions.amount.toNumber(),
+            date: updatedTransactions.date.toISOString(),
         }
     }
 }

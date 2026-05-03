@@ -13,6 +13,7 @@ export class PostgresGetTransactionsByUserIdRepository implements IGetTransactio
         return transactions.map((transaction) => ({
             ...transaction,
             amount: transaction.amount.toNumber(),
+            date: transaction.date.toISOString(),
         }))
     }
 }

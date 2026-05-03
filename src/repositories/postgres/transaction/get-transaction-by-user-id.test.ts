@@ -1,3 +1,4 @@
+import { jest } from '@jest/globals'
 import { prisma } from '../../../../prisma/prisma.js'
 import {
     makeTransaction,
@@ -29,5 +30,29 @@ describe('PostgresGetTransactionByUserIdRepository', () => {
         expect(new Date(result[0]!.date).toISOString().slice(0, 10)).toBe(
             new Date(transaction.date).toISOString().slice(0, 10),
         )
+    })
+
+    it('should call prisma with correnct params', async () => {
+        const sut = new PostgresGetTransactionsByUserIdRepository()
+        const prismaSpy = jest.spyOn(prisma.transaction, 'findMany')
+
+        await sut.execute(user.id)
+
+        expect(prismaSpy).toHaveBeenCalledWith({
+            where: {
+                user_id: user.id,
+            },
+        })
+    })
+
+    it('should throw if Prisma throws', async () => {
+        const sut = new PostgresGetTransactionsByUserIdRepository()
+        const prismaSpy = jest
+            .spyOn(prisma.transaction, 'findMany')
+            .mockRejectedValueOnce(new Error())
+
+        const promise = sut.execute(user.id)
+
+        await expect(promise).rejects.toThrow()
     })
 })

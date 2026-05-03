@@ -73,4 +73,15 @@ describe('PostgresUpdateTransactionRepository', () => {
             },
         })
     })
+
+    it('should throw if Prisma throws', async () => {
+        const sut = new PostgresUpdateTransactionRepository()
+        const prismaSpy = jest
+            .spyOn(prisma.transaction, 'update')
+            .mockRejectedValueOnce(new Error())
+
+        const promise = sut.execute(transaction.id, transaction)
+
+        await expect(promise).rejects.toThrow()
+    })
 })

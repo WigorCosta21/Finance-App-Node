@@ -1,4 +1,5 @@
 import { faker } from '@faker-js/faker'
+import { jest } from '@jest/globals'
 import { prisma } from '../../../../prisma/prisma.js'
 import {
     makeTransaction,
@@ -24,7 +25,6 @@ describe('PostgresUpdateTransactionRepository', () => {
 
         const params = {
             id: faker.string.uuid(),
-            user_id: user.id,
             name: faker.commerce.productName(),
             date: faker.date.anytime().toISOString(),
             amount: faker.number.int({
@@ -44,5 +44,33 @@ describe('PostgresUpdateTransactionRepository', () => {
         expect(new Date(result!.date).toISOString().slice(0, 10)).toBe(
             new Date(params.date).toISOString().slice(0, 10),
         )
+    })
+
+    it('should call prisma with correnct params', async () => {
+        await prisma.user.create({ data: user })
+        await prisma.transaction.create({
+            data: { ...transaction, user_id: user.id },
+        })
+        const sut = new PostgresUpdateTransactionRepository()
+        const prismaSpy = jest.spyOn(prisma.transaction, 'update')
+
+        await sut.execute(transaction.id, {
+            name: transaction.name,
+            date: transaction.date,
+            amount: transaction.amount,
+            type: transaction.type,
+        })
+
+        expect(prismaSpy).toHaveBeenCalledWith({
+            where: {
+                id: transaction.id,
+            },
+            data: {
+                name: transaction.name,
+                date: transaction.date,
+                amount: transaction.amount,
+                type: transaction.type,
+            },
+        })
     })
 })

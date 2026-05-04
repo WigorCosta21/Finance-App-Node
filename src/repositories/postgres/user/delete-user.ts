@@ -1,7 +1,9 @@
+import { PrismaClientKnownRequestError } from '@prisma/client/runtime/client'
 import { Prisma } from '../../../../generated/prisma/client.js'
 import { prisma } from '../../../../prisma/prisma.js'
 import type { PublicUser } from '../../../types/user.js'
 import type { IDeleteUserRepository } from '../../interfaces/user/delete-user.js'
+import { UserNotFoundError } from '../../../errors/user.js'
 
 export class PostgresDeleteUserRepository implements IDeleteUserRepository {
     async execute(userId: string): Promise<PublicUser | null> {
@@ -20,14 +22,15 @@ export class PostgresDeleteUserRepository implements IDeleteUserRepository {
 
             return deletedUser
         } catch (error) {
-            if (
-                error instanceof Prisma.PrismaClientKnownRequestError &&
-                error.code === 'P2025'
-            ) {
-                return null
+            if (error instanceof PrismaClientKnownRequestError) {
+                const code = error.code
+
+                if (code === 'P2025') {
+                    throw new UserNotFoundError(userId)
+                }
             }
 
-            return null
+            throw new Error()
         }
     }
 }

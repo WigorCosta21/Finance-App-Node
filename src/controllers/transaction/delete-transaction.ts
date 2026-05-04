@@ -4,6 +4,7 @@ import { ok, serverError } from '../helpers/http.js'
 import { checkIfIdIsValid, invalidIdResponse } from '../helpers/validation.js'
 import { transactionNotFoundRespose } from '../helpers/transaction.js'
 import type { IDeleteTransactionUseCase } from '../../useCases/interfaces/transaction/delete-transaction.js'
+import { TransactionNotFoundError } from '../../errors/transaction.js'
 
 export class DeleteTransactionController {
     constructor(private deleteTransactionUseCase: IDeleteTransactionUseCase) {}
@@ -26,6 +27,10 @@ export class DeleteTransactionController {
 
             return ok(transaction)
         } catch (error) {
+            if (error instanceof TransactionNotFoundError) {
+                return transactionNotFoundRespose()
+            }
+
             console.error(error)
             return serverError()
         }

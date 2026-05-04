@@ -10,12 +10,16 @@ export class PostgresCreateTransactionRepository implements ICreateTransactionRe
         createTransactionParams: CreateTransactionRepositoryParams,
     ): Promise<Transaction> {
         const createdTransaction = await prisma.transaction.create({
-            data: createTransactionParams,
+            data: {
+                ...createTransactionParams,
+                date: new Date(createTransactionParams.date),
+            },
         })
 
         return {
             ...createdTransaction,
             amount: createdTransaction.amount.toNumber(),
+            date: createdTransaction.date.toISOString(),
         }
     }
 }

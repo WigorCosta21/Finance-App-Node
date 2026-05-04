@@ -4,8 +4,9 @@ import { jest } from '@jest/globals'
 import { DeleteUserController } from './delete-user.js'
 import type { PublicUser, UserIdParams } from '../../types/user.js'
 import { makeUser } from '../../tests/fixtures/index.js'
+import { UserNotFoundError } from '../../errors/user.js'
 
-describe('Delete User Controller', () => {
+describe('DeleteUserControllerRepository', () => {
     const user = makeUser()
     class DeleteUserUseCaseStub {
         async execute(): Promise<PublicUser | null> {
@@ -47,7 +48,9 @@ describe('Delete User Controller', () => {
     it('should return 404 if user is not found', async () => {
         const { sub, deleteUserUseCase } = makeSut()
 
-        jest.spyOn(deleteUserUseCase, 'execute').mockResolvedValueOnce(null)
+        jest.spyOn(deleteUserUseCase, 'execute').mockRejectedValueOnce(
+            new UserNotFoundError(user.id),
+        )
 
         const result = await sub.execute(makeHttpRequest())
 

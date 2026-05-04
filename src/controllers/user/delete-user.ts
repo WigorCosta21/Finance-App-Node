@@ -7,6 +7,7 @@ import {
     userNotFoundRespose,
 } from './../helpers/index.js'
 import type { IDeleteUserUseCase } from '../../useCases/interfaces/user/delete-user.js'
+import { UserNotFoundError } from '../../errors/user.js'
 
 export class DeleteUserController {
     constructor(private deleteUserUseCase: IDeleteUserUseCase) {}
@@ -25,12 +26,12 @@ export class DeleteUserController {
                 httpRequest.params.userId,
             )
 
-            if (!deletedUser) {
+            return ok(deletedUser)
+        } catch (error) {
+            if (error instanceof UserNotFoundError) {
                 return userNotFoundRespose()
             }
 
-            return ok(deletedUser)
-        } catch (error) {
             console.error(error)
             return serverError()
         }

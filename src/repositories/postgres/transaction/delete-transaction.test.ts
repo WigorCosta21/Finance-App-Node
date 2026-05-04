@@ -3,6 +3,8 @@ import { prisma } from '../../../../prisma/prisma.js'
 import { makeTransaction } from '../../../tests/fixtures/transactions.js'
 import { makeUserParams } from '../../../tests/fixtures/user.js'
 import { PostgresDeleteTransactionReposiroty } from './delete-transaction.js'
+import { PrismaClientKnownRequestError } from '@prisma/client/runtime/client'
+import { TransactionNotFoundError } from '../../../errors/transaction.js'
 
 describe('PostgresDeleteTransactionRepository', () => {
     const userFaker = makeUserParams()
@@ -64,5 +66,21 @@ describe('PostgresDeleteTransactionRepository', () => {
         const promise = sut.execute(transactionFaker.id)
 
         await expect(promise).rejects.toThrow()
+    })
+
+    it('should throw generic error if Prisma throws generic error', async () => {
+        const sut = new PostgresDeleteTransactionReposiroty()
+        jest.spyOn(prisma.transaction, 'delete').mockRejectedValueOnce(
+            new PrismaClientKnownRequestError('', {
+                code: 'P2025',
+                clientVersion: '0.0.0',
+            }),
+        )
+
+        const promise = sut.execute(transactionFaker.id)
+
+        await expect(promise).rejects.toThrow(
+            new TransactionNotFoundError(transactionFaker.id),
+        )
     })
 })

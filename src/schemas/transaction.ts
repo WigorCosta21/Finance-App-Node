@@ -8,7 +8,7 @@ export const createTransactionSchema = z.object({
     name: z.string().trim().min(1, {
         message: 'Name is required.',
     }),
-    date: z.iso.date('Date must be a valid date'),
+    date: z.iso.datetime('Date must be a valid date'),
     type: z.enum(['EARNING', 'EXPENSE', 'INVESTMENT'], {
         error: 'Type must be EARNING, EXPENSE, INVESTMENT',
     }),

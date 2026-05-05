@@ -15,6 +15,7 @@ describe('User Routes E2E Testes', () => {
 
         expect(response.statusCode).toBe(201)
     })
+
     it('GET /api/users/:userId should return 200 when user is found', async () => {
         const user = makeUserParams()
         const { body: createdUser } = await request(app)
@@ -55,5 +56,21 @@ describe('User Routes E2E Testes', () => {
         expect(response.body.last_name).toBe(updateUserParams.last_name)
         expect(response.body.email).toBe(updateUserParams.email)
         expect(response.body.password).not.toBe(updateUserParams.password)
+    })
+
+    it('DELETE /api/users/:userId should return 200 when user is deleted', async () => {
+        const user = makeUserParams()
+        const { body: createdUser } = await request(app)
+            .post('/api/users')
+            .send({
+                ...user,
+                id: undefined,
+            })
+
+        const response = await request(app).delete(
+            `/api/users/${createdUser.id}`,
+        )
+
+        expect(response.statusCode).toBe(200)
     })
 })

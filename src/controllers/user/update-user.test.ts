@@ -7,7 +7,7 @@ import type {
     UpdateUserParams,
     UserIdParams,
 } from '../../types/user.js'
-import { EmailAlreadyInUseError } from '../../errors/user.js'
+import { EmailAlreadyInUseError, UserNotFoundError } from '../../errors/user.js'
 import { makeUser } from '../../tests/fixtures/user.js'
 
 describe('UpdateUserController', () => {
@@ -124,6 +124,18 @@ describe('UpdateUserController', () => {
         const result = await sut.execute(makeHttpRequest())
 
         expect(result.statusCode).toBe(400)
+    })
+
+    it('should return 404 if UpdateUserUserCase throws UserNotFoundError', async () => {
+        const { sut, updateUserUseCase } = makeSut()
+
+        jest.spyOn(updateUserUseCase, 'execute').mockRejectedValueOnce(
+            new UserNotFoundError(faker.string.ulid()),
+        )
+
+        const result = await sut.execute(makeHttpRequest())
+
+        expect(result.statusCode).toBe(404)
     })
 
     it('should call UpdateUserUseCase with correct params', async () => {

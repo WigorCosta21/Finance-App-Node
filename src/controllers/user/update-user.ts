@@ -1,11 +1,12 @@
 import type { Request } from 'express'
-import { EmailAlreadyInUseError } from '../../errors/user.js'
+import { EmailAlreadyInUseError, UserNotFoundError } from '../../errors/user.js'
 import {
     checkIfIdIsValid,
     invalidIdResponse,
     badRequest,
     ok,
     serverError,
+    userNotFoundRespose,
 } from './../helpers/index.js'
 import type { UpdateUserParams, UserIdParams } from '../../types/user.js'
 import { updateUserSchema } from '../../schemas/user.js'
@@ -51,6 +52,10 @@ export class UpdateUserController {
 
             if (error instanceof EmailAlreadyInUseError) {
                 return badRequest({ error: error.message })
+            }
+
+            if (error instanceof UserNotFoundError) {
+                return userNotFoundRespose()
             }
 
             console.error(error)

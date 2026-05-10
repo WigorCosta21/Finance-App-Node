@@ -117,4 +117,14 @@ describe('Transaction Routes E2E Tests', () => {
 
         expect(response.status).toBe(404)
     })
+
+    it('DELETE /api/transactions/:transactionId should returns 404 when updating a non-existing transaction', async () => {
+        const transaction = makeTransaction()
+
+        const response = await request(app)
+            .delete(`/api/transactions/${transaction.id}`)
+            .send({ amount: 100, type: TransactionType.INVESTMENT })
+
+        expect(response.status).toBe(404)
+    })
 })

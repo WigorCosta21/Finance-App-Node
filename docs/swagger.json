@@ -42,6 +42,42 @@
                 }
             }
         },
+
+        "/api/users/{userId}/balance": {
+            "get": {
+                "summary": "Get user balance by user ID",
+                "tags": ["User"],
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "userId",
+                        "required": true,
+                        "type": "string",
+                        "description": "ID of the user to get balance"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "User balance found",
+                        "schema": {
+                            "$ref": "#/definitions/UserBalance"
+                        }
+                    },
+                    "404": {
+                        "description": "User not found",
+                        "schema": {
+                            "$ref": "#/definitions/UserNotFoundResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#definitions/InternalServerErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/api/users/{userId}": {
             "get": {
                 "summary": "Get user by id",
@@ -142,6 +178,12 @@
                             "$ref": "#/definitions/InvalidParamsResponse"
                         }
                     },
+                    "404": {
+                        "description": "User not found",
+                        "schema": {
+                            "$ref": "#/definitions/UserNotFoundResponse"
+                        }
+                    },
                     "500": {
                         "description": "Internal server error",
                         "schema": {
@@ -192,6 +234,27 @@
                 "email": {
                     "type": "string",
                     "example": "john@doe.com"
+                }
+            }
+        },
+        "UserBalance": {
+            "type": "object",
+            "properties": {
+                "earnings": {
+                    "type": "string",
+                    "example": "3000"
+                },
+                "expenses": {
+                    "type": "string",
+                    "example": "1000"
+                },
+                "investments": {
+                    "type": "string",
+                    "example": "1000"
+                },
+                "balance": {
+                    "type": "string",
+                    "example": "1000"
                 }
             }
         },

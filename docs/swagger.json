@@ -16,7 +16,7 @@
                         "required": true,
                         "in": "body",
                         "schema": {
-                            "$ref": "#/definitions/CreateUserParams"
+                            "$ref": "#definitions/CreateUserParams"
                         }
                     }
                 ],
@@ -24,19 +24,13 @@
                     "201": {
                         "description": "user created successfully",
                         "schema": {
-                            "#ref": "#definitions/User"
+                            "$ref": "#definitions/User"
                         }
                     },
                     "400": {
                         "description": "Invalid params",
                         "schema": {
-                            "type": "object",
-                            "properties": {
-                                "message": {
-                                    "type": "string",
-                                    "example": "invalid params"
-                                }
-                            }
+                            "$ref": "#/definitions/InvalidParamsResponse"
                         }
                     },
                     "500": {
@@ -96,7 +90,7 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "User found",
+                        "description": "User deleted successfully",
                         "schema": {
                             "$ref": "#/definitions/UserResponse"
                         }
@@ -105,6 +99,47 @@
                         "description": "User not found",
                         "schema": {
                             "$ref": "#/definitions/UserNotFoundResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#definitions/InternalServerErrorResponse"
+                        }
+                    }
+                }
+            },
+            "patch": {
+                "summary": "Update user by id",
+                "tags": ["User"],
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "userId",
+                        "required": true,
+                        "type": "string",
+                        "description": "ID of the user to update"
+                    },
+                    {
+                        "name": "body",
+                        "required": true,
+                        "in": "body",
+                        "schema": {
+                            "$ref": "#definitions/CreateUserParams"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "User updated successfully",
+                        "schema": {
+                            "$ref": "#/definitions/UserResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid params",
+                        "schema": {
+                            "$ref": "#/definitions/InvalidParamsResponse"
                         }
                     },
                     "500": {
@@ -182,6 +217,15 @@
                 "password": {
                     "type": "string",
                     "example": "password"
+                }
+            }
+        },
+        "InvalidParamsResponse": {
+            "type": "object",
+            "properties": {
+                "message": {
+                    "type": "string",
+                    "example": "invalid params"
                 }
             }
         },

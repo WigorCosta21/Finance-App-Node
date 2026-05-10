@@ -6,6 +6,8 @@ import type { UpdateTransactionParams } from '../../types/transaction.js'
 
 import type { IUpdateTransactionUseCase } from '../../useCases/interfaces/transaction/update-transaction.js'
 import { updateTransactionSchema } from '../../schemas/transaction.js'
+import { TransactionNotFoundError } from '../../errors/transaction.js'
+import { transactionNotFoundRespose } from '../helpers/transaction.js'
 
 export interface ITransactionIdParams {
     transactionId: string
@@ -51,6 +53,10 @@ export class UpdateTransactionController {
                                 : issue.message,
                     })),
                 })
+            }
+
+            if (error instanceof TransactionNotFoundError) {
+                return transactionNotFoundRespose()
             }
 
             console.log(error)

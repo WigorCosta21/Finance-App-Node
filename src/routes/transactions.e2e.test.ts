@@ -3,6 +3,7 @@ import { app } from '../app.js'
 import { makeTransaction } from '../tests/fixtures/transactions.js'
 import { makeUserParams } from '../tests/fixtures/user.js'
 import { TransactionType } from '../../generated/prisma/enums.js'
+import { faker } from '@faker-js/faker'
 
 describe('Transaction Routes E2E Tests', () => {
     it('POST /api/transactions should return 201 when creating a transaction successfully', async () => {
@@ -29,7 +30,7 @@ describe('Transaction Routes E2E Tests', () => {
         expect(response.body.amount).toBe(transaction.amount)
     })
 
-    it('GET /api/transactions should returns 200 when fetching transactions successfully', async () => {
+    it('GET /api/transaction?userId=userId s should returns 200 when fetching transactions successfully', async () => {
         const user = makeUserParams()
         const { body: createdUser } = await request(app)
             .post('/api/users')
@@ -118,11 +119,21 @@ describe('Transaction Routes E2E Tests', () => {
         expect(response.status).toBe(404)
     })
 
-    it('DELETE /api/transactions/:transactionId should returns 404 when updating a non-existing transaction', async () => {
+    it('DELETE /api/transactions/:transactionId should returns 404 when deleting a non-existing transaction', async () => {
         const transaction = makeTransaction()
 
         const response = await request(app)
             .delete(`/api/transactions/${transaction.id}`)
+            .send({ amount: 100, type: TransactionType.INVESTMENT })
+
+        expect(response.status).toBe(404)
+    })
+
+    it('GET /api/transactions?userId=userId should returns 404 when fetching from a nom-existing user', async () => {
+        const transaction = makeTransaction()
+
+        const response = await request(app)
+            .get(`/api/transactions/?userId=${faker.string.uuid()}`)
             .send({ amount: 100, type: TransactionType.INVESTMENT })
 
         expect(response.status).toBe(404)

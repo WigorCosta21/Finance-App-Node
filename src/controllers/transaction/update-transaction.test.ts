@@ -8,6 +8,7 @@ import type {
 } from '../../types/transaction.js'
 import { UpdateTransactionController } from './update-transaction.js'
 import { makeTransaction } from '../../tests/fixtures/index.js'
+import { TransactionNotFoundError } from '../../errors/transaction.js'
 
 describe('UpdateTransactionController', () => {
     class UpdateTransactionUseCaseStub {
@@ -101,6 +102,17 @@ describe('UpdateTransactionController', () => {
         expect(response.statusCode).toBe(500)
     })
 
+    it('should return 404 if TransactionNotFoundError is throw', async () => {
+        const { sut, updateTransactionUseCase } = makeSut()
+
+        jest.spyOn(updateTransactionUseCase, 'execute').mockRejectedValueOnce(
+            new TransactionNotFoundError(faker.string.uuid()),
+        )
+
+        const response = await sut.execute(makeHttpRequestBody())
+
+        expect(response.statusCode).toBe(404)
+    })
     it('should call UpdateTransactionUseCase with correct values', async () => {
         const { sut, updateTransactionUseCase } = makeSut()
 

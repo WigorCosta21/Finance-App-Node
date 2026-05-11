@@ -17,6 +17,7 @@ describe('PostgresGetTransactionByUserIdRepository', () => {
             data: {
                 ...transaction,
                 user_id: user.id,
+                date: new Date(transaction.date),
             },
         })
 

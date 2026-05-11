@@ -10,7 +10,7 @@ export const makeTransaction = (
     id: faker.string.uuid(),
     user_id: faker.string.uuid(),
     name: faker.commerce.productName(),
-    date: faker.date.anytime().toISOString(),
+    date: faker.date.anytime().toISOString().slice(0, 10),
     amount: faker.number.int({
         min: 100,
         max: 10000,
@@ -24,7 +24,7 @@ export const makeTransactionParams = (
 ): CreateTransactionParams => ({
     user_id: faker.string.uuid(),
     name: faker.commerce.productName(),
-    date: faker.date.anytime().toISOString(),
+    date: faker.date.anytime().toISOString().slice(0, 10),
     amount: faker.number.int(),
     type: 'EARNING',
     ...override,

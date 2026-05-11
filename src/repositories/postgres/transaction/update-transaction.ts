@@ -17,7 +17,12 @@ export class PostgresUpdateTransactionRepository implements IUpdateTransactionRe
                 where: {
                     id: transactionId,
                 },
-                data: updateTransactioParams,
+                data: {
+                    ...updateTransactioParams,
+                    ...(updateTransactioParams.date && {
+                        date: new Date(updateTransactioParams.date),
+                    }),
+                },
             })
 
             return {

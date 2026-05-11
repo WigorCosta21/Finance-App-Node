@@ -84,29 +84,35 @@ describe('User Routes E2E Testes', () => {
                 id: undefined,
             })
 
-        await request(app).post('/api/transactions').send({
-            user_id: createdUser.id,
-            name: faker.commerce.productName(),
-            date: faker.date.anytime().toISOString(),
-            amount: 10000,
-            type: TransactionType.EARNING,
-        })
+        await request(app)
+            .post('/api/transactions')
+            .send({
+                user_id: createdUser.id,
+                name: faker.commerce.productName(),
+                date: faker.date.anytime().toISOString().slice(0, 10),
+                amount: 10000,
+                type: TransactionType.EARNING,
+            })
 
-        await request(app).post('/api/transactions').send({
-            user_id: createdUser.id,
-            name: faker.commerce.productName(),
-            date: faker.date.anytime().toISOString(),
-            amount: 2000,
-            type: TransactionType.EXPENSE,
-        })
+        await request(app)
+            .post('/api/transactions')
+            .send({
+                user_id: createdUser.id,
+                name: faker.commerce.productName(),
+                date: faker.date.anytime().toISOString().slice(0, 10),
+                amount: 2000,
+                type: TransactionType.EXPENSE,
+            })
 
-        await request(app).post('/api/transactions').send({
-            user_id: createdUser.id,
-            name: faker.commerce.productName(),
-            date: faker.date.anytime().toISOString(),
-            amount: 2000,
-            type: TransactionType.INVESTMENT,
-        })
+        await request(app)
+            .post('/api/transactions')
+            .send({
+                user_id: createdUser.id,
+                name: faker.commerce.productName(),
+                date: faker.date.anytime().toISOString().slice(0, 10),
+                amount: 2000,
+                type: TransactionType.INVESTMENT,
+            })
 
         const response = await request(app).get(
             `/api/users/${createdUser.id}/balance`,

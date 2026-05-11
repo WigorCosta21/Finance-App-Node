@@ -19,6 +19,7 @@ describe('PostgresDeleteTransactionRepository', () => {
             data: {
                 ...transactionFaker,
                 user_id: user.id,
+                date: new Date(transactionFaker.date),
             },
         })
 
@@ -43,6 +44,7 @@ describe('PostgresDeleteTransactionRepository', () => {
             data: {
                 ...transactionFaker,
                 user_id: user.id,
+                date: new Date(transactionFaker.date),
             },
         })
         const prismaSpy = jest.spyOn(prisma.transaction, 'delete')

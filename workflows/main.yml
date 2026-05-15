@@ -1,0 +1,28 @@
+name: Deploy
+
+on:
+    push:
+        branches:
+            - main
+
+jobs:
+    check:
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: Checkout code
+              run: actions/checkout@v4
+
+            - name: Use Node.js
+              run: actions/setup-node@v4
+              with:
+                  node-version: 24
+
+            - name: ESlint
+              run: npm run eslint:check
+
+            - name: Prettier
+              run: npm run prettier:check
+
+            - name: Test
+              run: npm run test:ci

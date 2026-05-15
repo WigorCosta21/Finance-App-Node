@@ -7,9 +7,12 @@
         "dev": "tsx watch src/server.ts",
         "lint": "eslint .",
         "lint:fix": "eslint . --fix",
+        "eslint:check": "eslint src/ --ext .js",
+        "prettier:check": "prettier --check src",
         "format:write": "prettier . --write",
         "migrations:run": "npx tsx src/db/postgres/migrations/exec.ts",
         "test:dev": "set NODE_OPTIONS=--experimental-vm-modules && dotenv -e .env.test -- jest --watchAll --runInBand --silent --detectOpenHandles",
+        "test:ci": "dotenv -e .env.test -- jest --runInBand --silent --detectOpenHandles",
         "test:coverage": "set NODE_OPTIONS=--experimental-vm-modules && dotenv -e .env.test -- npx jest --coverage --runInBand"
     },
     "keywords": [],

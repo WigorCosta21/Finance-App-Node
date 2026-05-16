@@ -9,6 +9,21 @@ jobs:
     check:
         runs-on: ubuntu-latest
 
+        services:
+            postgres-test:
+                image: postgres:16
+                env:
+                    POSTGRES_USER: postgres
+                    POSTGRES_PASSWORD: postgres
+                    POSTGRES_DB: finance_app_test
+                ports:
+                    - 5433:5432
+                options: >-
+                    --health-cmd pg_isready
+                    --health-interval 10s
+                    --health-timeout 5s
+                    --health-retries 5
+
         steps:
             - name: Checkout code
               uses: actions/checkout@v6
@@ -20,9 +35,9 @@ jobs:
                   cache: 'npm'
 
             - name: Install dependencies
-              run: npm install
+              run: npm ci
 
-            - name: ESlint
+            - name: ESLint
               run: npm run eslint:check
 
             - name: Prettier
@@ -50,12 +65,9 @@ jobs:
                   cache: 'npm'
 
             - name: Install dependencies
-              run: npm install
-
-            - name: Make envfile
-              uses: SpicyPizza/create-envfile@v2.0
-              with:
-                  envkey_DATABASE_URL: ${{ secrets.DATABASE_URL }}
+              run: npm ci
 
             - name: Run migrations
               run: npx prisma migrate deploy
+              env:
+                  DATABASE_URL: ${{ secrets.DATABASE_URL }}

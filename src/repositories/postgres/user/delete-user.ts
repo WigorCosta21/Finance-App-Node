@@ -1,5 +1,4 @@
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/client'
-import { Prisma } from '../../../../generated/prisma/client.js'
 import { prisma } from '../../../../prisma/prisma.js'
 import type { PublicUser } from '../../../types/user.js'
 import type { IDeleteUserRepository } from '../../interfaces/user/delete-user.js'

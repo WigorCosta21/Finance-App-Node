@@ -22,9 +22,22 @@ export default tseslint.config(
         languageOptions: {
             globals: globals.node,
         },
-    },
 
-    // 👇 ADICIONA ISSO
+        rules: {
+            'no-unused-vars': 'off',
+
+            '@typescript-eslint/no-unused-vars': [
+                'error',
+                {
+                    argsIgnorePattern: '^_',
+                    varsIgnorePattern: '^_',
+                    caughtErrorsIgnorePattern: '^_',
+                    destructuredArrayIgnorePattern: '^_',
+                    ignoreRestSiblings: true,
+                },
+            ],
+        },
+    },
     {
         files: ['**/*.test.ts', '**/*.test.js', '**/*.mjs'],
         languageOptions: {

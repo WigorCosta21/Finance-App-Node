@@ -130,8 +130,6 @@ describe('Transaction Routes E2E Tests', () => {
     })
 
     it('GET /api/transactions?userId=userId should returns 404 when fetching from a nom-existing user', async () => {
-        const transaction = makeTransaction()
-
         const response = await request(app)
             .get(`/api/transactions/?userId=${faker.string.uuid()}`)
             .send({ amount: 100, type: TransactionType.INVESTMENT })

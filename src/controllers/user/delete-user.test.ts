@@ -49,7 +49,7 @@ describe('DeleteUserControllerRepository', () => {
         const { sub, deleteUserUseCase } = makeSut()
 
         jest.spyOn(deleteUserUseCase, 'execute').mockRejectedValueOnce(
-            new UserNotFoundError(user.id),
+            new UserNotFoundError(),
         )
 
         const result = await sub.execute(makeHttpRequest())

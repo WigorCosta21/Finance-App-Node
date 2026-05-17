@@ -13,7 +13,7 @@ export class GetUserBalanceUseCase implements IGetUserBalanceUseCase {
         const user = await this.getUserByIdRepository.execute(userId)
 
         if (!user) {
-            throw new UserNotFoundError(userId)
+            throw new UserNotFoundError()
         }
 
         const balance = await this.getUserBalanceRepository.execute(userId)

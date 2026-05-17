@@ -48,9 +48,7 @@ describe('GetUserBalanceUseCase', () => {
 
         const promise = sut.execute(userBalance.id)
 
-        await expect(promise).rejects.toThrow(
-            new UserNotFoundError(userBalance.id),
-        )
+        await expect(promise).rejects.toThrow(new UserNotFoundError())
     })
 
     it('should call GetUserByIdRepository with correct params', async () => {

@@ -66,7 +66,7 @@ describe('GetTransactionByUserIdController', () => {
         jest.spyOn(
             getTransactionByUserIdUseCase,
             'execute',
-        ).mockRejectedValueOnce(new UserNotFoundError('user_id_not_found'))
+        ).mockRejectedValueOnce(new UserNotFoundError())
 
         const response = await sub.execute(makeHttpRequest())
 

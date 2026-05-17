@@ -51,7 +51,7 @@ describe('GetTransactionByUserIdUseCase', () => {
 
         const promise = sut.execute(user.id)
 
-        await expect(promise).rejects.toThrow(new UserNotFoundError(user.id))
+        await expect(promise).rejects.toThrow(new UserNotFoundError())
     })
 
     it('shout call GetUserByIdRepository with correct params', async () => {

@@ -109,9 +109,7 @@ describe('CreateTransactionUseCase', () => {
 
         const promise = sut.execute(transaction)
 
-        await expect(promise).rejects.toThrow(
-            new UserNotFoundError(transaction.user_id),
-        )
+        await expect(promise).rejects.toThrow(new UserNotFoundError())
     })
     it('should throw if GetUserByIdRepository throws ', async () => {
         const { sut, getUserByIdRepository } = makeSut()

@@ -130,7 +130,7 @@ describe('UpdateUserController', () => {
         const { sut, updateUserUseCase } = makeSut()
 
         jest.spyOn(updateUserUseCase, 'execute').mockRejectedValueOnce(
-            new UserNotFoundError(faker.string.ulid()),
+            new UserNotFoundError(),
         )
 
         const result = await sut.execute(makeHttpRequest())

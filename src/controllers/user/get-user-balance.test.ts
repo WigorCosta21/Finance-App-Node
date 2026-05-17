@@ -77,10 +77,8 @@ describe('GetUserBalanceController', () => {
     it('should return 404 if GetUserBalanceUseCase throws UserNotFoundError', async () => {
         const { sut, getUserBalanceUseCase } = makeSut()
 
-        const userId = faker.string.uuid()
-
         jest.spyOn(getUserBalanceUseCase, 'execute').mockRejectedValueOnce(
-            new UserNotFoundError(userId),
+            new UserNotFoundError(),
         )
 
         const response = await sut.execute(makeHttpRequest())

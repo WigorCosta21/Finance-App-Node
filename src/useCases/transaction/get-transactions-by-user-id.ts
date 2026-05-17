@@ -14,7 +14,7 @@ export class GetTransactionsByUserIdUseCase implements IGetTransactionByUserIdUs
         const user = await this.getUserByIdRepository.execute(userId)
 
         if (!user) {
-            throw new UserNotFoundError(userId)
+            throw new UserNotFoundError()
         }
 
         const transaction =

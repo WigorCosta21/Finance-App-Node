@@ -26,7 +26,7 @@ export class PostgresUpdateUserRepository implements IUpdateUserRepository {
                 const code = error.code
 
                 if (code === 'P2025') {
-                    throw new UserNotFoundError(userId)
+                    throw new UserNotFoundError()
                 }
             }
 

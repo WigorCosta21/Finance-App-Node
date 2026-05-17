@@ -56,7 +56,7 @@ describe('PostgresDeleteUserRepository', () => {
         )
 
         await expect(sut.execute(user.id)).rejects.toThrow(
-            new UserNotFoundError(user.id),
+            new UserNotFoundError(),
         )
     })
 })

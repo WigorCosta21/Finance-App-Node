@@ -5,6 +5,7 @@
     "main": "index.js",
     "scripts": {
         "dev": "tsx watch src/server.ts",
+        "start": "tsx src/server.ts",
         "lint": "eslint .",
         "lint:fix": "eslint . --fix",
         "eslint:check": "eslint src/ --ext .js",

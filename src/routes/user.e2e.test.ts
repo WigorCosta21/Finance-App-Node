@@ -175,4 +175,23 @@ describe('User Routes E2E Testes', () => {
 
         expect(response.statusCode).toBe(400)
     })
+
+    it('POST /api/users/login should return 200 and token when user credentials are valid', async () => {
+        const user = makeUserParams()
+        const { body: createdUser } = await request(app)
+            .post('/api/users')
+            .send({
+                ...user,
+                id: undefined,
+            })
+
+        const response = await request(app).post('/api/users/login').send({
+            email: createdUser.email,
+            password: user.password,
+        })
+
+        expect(response.statusCode).toBe(200)
+        expect(response.body.tokens.accessToken).toBeDefined()
+        expect(response.body.tokens.refreshToken).toBeDefined()
+    })
 })

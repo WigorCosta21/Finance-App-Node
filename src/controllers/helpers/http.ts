@@ -5,6 +5,15 @@ export const badRequest = (body: unknown) => {
     }
 }
 
+export const unauthorized = () => {
+    return {
+        statusCode: 401,
+        body: {
+            message: 'Unauthorized',
+        },
+    }
+}
+
 export const created = (body: unknown) => {
     return {
         statusCode: 201,

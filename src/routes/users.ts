@@ -6,6 +6,7 @@ import {
     makeDeleteUserController,
     makeGetUserBalanceController,
     makeGetUserByIdController,
+    makeLoginUserController,
     makeUpdateUserController,
 } from '../factories/controllers/user.js'
 
@@ -64,3 +65,11 @@ usersRoutes.delete(
         return response.status(statusCode).json(body)
     },
 )
+
+usersRoutes.post('/login', async (request: Request, response: Response) => {
+    const loginUserController = makeLoginUserController()
+
+    const { statusCode, body } = await loginUserController.execute(request)
+
+    response.status(statusCode).send(body)
+})

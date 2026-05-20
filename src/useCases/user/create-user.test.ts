@@ -4,6 +4,7 @@ import type { CreateUserParams, PublicUser } from '../../types/user.js'
 import { CreateUserUseCase } from './create-user.js'
 import { EmailAlreadyInUseError } from '../../errors/user.js'
 import { makeUserParams } from '../../tests/fixtures/index.js'
+
 describe('CreateUserUseCase', () => {
     class GetUserByEmailRepositoryStub {
         async execute(): Promise<PublicUser | null> {
@@ -34,17 +35,28 @@ describe('CreateUserUseCase', () => {
         }
     }
 
+    class TokenGeneratorAdapterStub {
+        execute() {
+            return {
+                accessToken: 'any_access_token',
+                refreshToken: 'any_reflesh_token',
+            }
+        }
+    }
+
     const makeSut = () => {
         const getUserByEmailRepositoryEmail = new GetUserByEmailRepositoryStub()
         const createUserRepository = new CreateUserRepositotyStub()
         const passwordHasherAdapter = new PasswordHasherAdapterStub()
         const idGeneratorAdapter = new IdGeneratorAdapterStub()
+        const tokensGeneratorAdapter = new TokenGeneratorAdapterStub()
 
         const sut = new CreateUserUseCase(
             createUserRepository,
             getUserByEmailRepositoryEmail,
             passwordHasherAdapter,
             idGeneratorAdapter,
+            tokensGeneratorAdapter,
         )
 
         return {
@@ -64,6 +76,8 @@ describe('CreateUserUseCase', () => {
         const createUser = await sut.execute(makeHttpRequestBody())
 
         expect(createUser).toBeTruthy()
+        expect(createUser.tokens.accessToken).toBeDefined()
+        expect(createUser.tokens.refreshToken).toBeDefined()
     })
 
     it('should throws an EmailAlreadyInUseError if GetUserByEmailRepository returns a user', async () => {
@@ -110,6 +124,7 @@ describe('CreateUserUseCase', () => {
             id: 'generated_id',
         })
     })
+
     it('should call PasswordHasherAdapter to cryptograph password', async () => {
         const { sut, createUserRepository, passwordHasherAdapter } = makeSut()
         const user = makeHttpRequestBody()

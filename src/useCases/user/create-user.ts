@@ -4,6 +4,7 @@ import type { IGetUserByEmailRepository } from '../../repositories/interfaces/us
 import type {
     PasswordHasherAdapter,
     IdGeneratorAdapter,
+    TokensGeneratorAdapter,
 } from '../../adapters/index.js'
 import type { ICreateUserUseCase } from '../interfaces/user/create-user.js'
 import type { ICreateUserRepository } from '../../repositories/interfaces/user/create-user.js'
@@ -14,6 +15,7 @@ export class CreateUserUseCase implements ICreateUserUseCase {
         private getUserByEmail: IGetUserByEmailRepository,
         private passwordHasherAdapter: PasswordHasherAdapter,
         private idGeneratorAdapter: IdGeneratorAdapter,
+        private tokensGeneratorAdapter: TokensGeneratorAdapter,
     ) {}
 
     async execute(createUserParams: CreateUserParams) {
@@ -39,6 +41,9 @@ export class CreateUserUseCase implements ICreateUserUseCase {
 
         const createdUser = await this.createUserRepository.execute(user)
 
-        return createdUser
+        return {
+            ...createdUser,
+            tokens: this.tokensGeneratorAdapter.execute(userId),
+        }
     }
 }

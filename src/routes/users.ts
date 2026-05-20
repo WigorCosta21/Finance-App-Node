@@ -9,11 +9,13 @@ import {
     makeLoginUserController,
     makeUpdateUserController,
 } from '../factories/controllers/user.js'
+import { auth } from '../middlewares/auth.js'
 
 export const usersRoutes = Router()
 
 usersRoutes.get(
     '/:userId',
+    auth,
     async (request: Request<UserIdParams>, response: Response) => {
         const getUserByIdController = makeGetUserByIdController()
 
@@ -26,6 +28,7 @@ usersRoutes.get(
 
 usersRoutes.get(
     '/:userId/balance',
+    auth,
     async (request: Request<UserIdParams>, response: Response) => {
         const getUserBalanceController = makeGetUserBalanceController()
 
@@ -46,6 +49,7 @@ usersRoutes.post('/', async (request: Request, response: Response) => {
 
 usersRoutes.patch(
     '/:userId',
+    auth,
     async (request: Request<UserIdParams>, response: Response) => {
         const updateUserController = makeUpdateUserController()
 
@@ -57,6 +61,7 @@ usersRoutes.patch(
 
 usersRoutes.delete(
     '/:userId',
+    auth,
     async (request: Request<UserIdParams>, response: Response) => {
         const deleteUserController = makeDeleteUserController()
 

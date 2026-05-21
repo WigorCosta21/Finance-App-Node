@@ -43,7 +43,7 @@ export class CreateUserUseCase implements ICreateUserUseCase {
 
         return {
             ...createdUser,
-            tokens: this.tokensGeneratorAdapter.execute(userId),
+            tokens: this.tokensGeneratorAdapter.execute(createdUser.id),
         }
     }
 }

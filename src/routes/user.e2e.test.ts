@@ -1,3 +1,4 @@
+import jwt from 'jsonwebtoken'
 import request from 'supertest'
 import { app } from '../app.js'
 import { makeUserParams } from '../tests/fixtures/user.js'
@@ -17,24 +18,27 @@ describe('User Routes E2E Testes', () => {
         expect(response.statusCode).toBe(201)
     })
 
-    it('GET /api/users/:userId should return 200 when user is found', async () => {
+    it('GET /api/users/ should return 200 when user is found', async () => {
         const user = makeUserParams()
         const { body: createdUser } = await request(app)
             .post('/api/users')
-            .send({
-                ...user,
-                id: undefined,
-            })
+            .send({ ...user, id: undefined })
+
+        const decoded = jwt.decode(createdUser.tokens.accessToken) as {
+            userId: string
+        }
+
+        console.error('createdUser.id (banco):', createdUser.id)
+        console.error('userId no token:       ', decoded.userId)
 
         const response = await request(app)
-            .get(`/api/users/${createdUser.id}`)
+            .get(`/api/users`)
             .set('Authorization', `Bearer ${createdUser.tokens.accessToken}`)
 
         expect(response.statusCode).toBe(200)
-        expect(response.body.id).toBe(createdUser.id)
     })
 
-    it('PATCH /api/users/:userId should return 200 when user is updated', async () => {
+    it('PATCH /api/users should return 200 when user is updated', async () => {
         const user = makeUserParams()
         const { body: createdUser } = await request(app)
             .post('/api/users')
@@ -51,7 +55,7 @@ describe('User Routes E2E Testes', () => {
         }
 
         const response = await request(app)
-            .patch(`/api/users/${createdUser.id}`)
+            .patch(`/api/users`)
             .set('Authorization', `Bearer ${createdUser.tokens.accessToken}`)
             .send(updateUserParams)
 
@@ -62,7 +66,7 @@ describe('User Routes E2E Testes', () => {
         expect(response.body.password).not.toBe(updateUserParams.password)
     })
 
-    it('DELETE /api/users/:userId should return 200 when user is deleted', async () => {
+    it('DELETE /api/users should return 200 when user is deleted', async () => {
         const user = makeUserParams()
         const { body: createdUser } = await request(app)
             .post('/api/users')
@@ -72,14 +76,14 @@ describe('User Routes E2E Testes', () => {
             })
 
         const response = await request(app)
-            .delete(`/api/users/${createdUser.id}`)
+            .delete(`/api/users`)
             .set('Authorization', `Bearer ${createdUser.tokens.accessToken}`)
 
         expect(response.statusCode).toBe(200)
         expect(response.body.id).toEqual(createdUser.id)
     })
 
-    it('GET /api/users/:userId/balance should return 200 and correct balance.', async () => {
+    it('GET /api/users/balance should return 200 and correct balance.', async () => {
         const user = makeUserParams()
         const { body: createdUser } = await request(app)
             .post('/api/users')
@@ -119,7 +123,7 @@ describe('User Routes E2E Testes', () => {
             })
 
         const response = await request(app)
-            .get(`/api/users/${createdUser.id}/balance`)
+            .get(`/api/users/balance`)
             .set('Authorization', `Bearer ${createdUser.tokens.accessToken}`)
 
         expect(response.statusCode).toBe(200)

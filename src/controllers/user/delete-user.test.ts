@@ -1,83 +1,71 @@
-import type { Request } from 'express'
 import { faker } from '@faker-js/faker'
 import { jest } from '@jest/globals'
 import { DeleteUserController } from './delete-user.js'
-import type { PublicUser, UserIdParams } from '../../types/user.js'
+import type { PublicUser } from '../../types/user.js'
 import { makeUser } from '../../tests/fixtures/index.js'
 import { UserNotFoundError } from '../../errors/user.js'
 
-describe('DeleteUserControllerRepository', () => {
+describe('DeleteUserController', () => {
     const user = makeUser()
+
     class DeleteUserUseCaseStub {
-        async execute(): Promise<PublicUser | null> {
+        async execute(_userId: string): Promise<PublicUser | null> {
             return user
         }
     }
 
     const makeSut = () => {
         const deleteUserUseCase = new DeleteUserUseCaseStub()
-
-        const sub = new DeleteUserController(deleteUserUseCase)
-
-        return { deleteUserUseCase, sub }
+        const sut = new DeleteUserController(deleteUserUseCase)
+        return { deleteUserUseCase, sut }
     }
 
-    const makeHttpRequest = (userId?: string) =>
-        ({
-            params: {
-                userId: userId ?? faker.string.uuid(),
-            },
-        }) as Request<UserIdParams>
-
     it('should return 200 if user is deleted', async () => {
-        const { sub } = makeSut()
+        const { sut } = makeSut()
 
-        const result = await sub.execute(makeHttpRequest())
+        const result = await sut.execute(faker.string.uuid())
 
         expect(result.statusCode).toBe(200)
     })
 
     it('should return 400 if id is invalid', async () => {
-        const { sub } = makeSut()
+        const { sut } = makeSut()
 
-        const result = await sub.execute(makeHttpRequest('invalid_id'))
+        const result = await sut.execute('invalid_id')
 
         expect(result.statusCode).toBe(400)
     })
 
     it('should return 404 if user is not found', async () => {
-        const { sub, deleteUserUseCase } = makeSut()
+        const { sut, deleteUserUseCase } = makeSut()
 
         jest.spyOn(deleteUserUseCase, 'execute').mockRejectedValueOnce(
             new UserNotFoundError(),
         )
 
-        const result = await sub.execute(makeHttpRequest())
+        const result = await sut.execute(faker.string.uuid())
 
         expect(result.statusCode).toBe(404)
     })
 
     it('should return 500 if DeleteUserUseCase throws', async () => {
-        const { sub, deleteUserUseCase } = makeSut()
+        const { sut, deleteUserUseCase } = makeSut()
 
         jest.spyOn(deleteUserUseCase, 'execute').mockImplementationOnce(() => {
             throw new Error()
         })
 
-        const result = await sub.execute(makeHttpRequest())
+        const result = await sut.execute(faker.string.uuid())
 
         expect(result.statusCode).toBe(500)
     })
 
     it('should call DeleteUserUseCase with correct params', async () => {
-        const { sub, deleteUserUseCase } = makeSut()
-
+        const { sut, deleteUserUseCase } = makeSut()
         const executeSpy = jest.spyOn(deleteUserUseCase, 'execute')
 
         const userId = faker.string.uuid()
-        const httpRequest = makeHttpRequest(userId)
-
-        await sub.execute(httpRequest)
+        await sut.execute(userId)
 
         expect(executeSpy).toHaveBeenCalledWith(userId)
     })

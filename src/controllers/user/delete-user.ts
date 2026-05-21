@@ -1,6 +1,4 @@
-import type { Request } from 'express'
 import { ok, serverError } from './../helpers/http.js'
-import type { UserIdParams } from '../../types/user.js'
 import {
     checkIfIdIsValid,
     invalidIdResponse,
@@ -12,19 +10,15 @@ import { UserNotFoundError } from '../../errors/user.js'
 export class DeleteUserController {
     constructor(private deleteUserUseCase: IDeleteUserUseCase) {}
 
-    async execute(httpRequest: Request<UserIdParams>) {
+    async execute(userId: string) {
         try {
-            const userId = httpRequest.params.userId
-
             const idIsValid = checkIfIdIsValid(userId)
 
             if (!idIsValid) {
                 return invalidIdResponse()
             }
 
-            const deletedUser = await this.deleteUserUseCase.execute(
-                httpRequest.params.userId,
-            )
+            const deletedUser = await this.deleteUserUseCase.execute(userId)
 
             return ok(deletedUser)
         } catch (error) {

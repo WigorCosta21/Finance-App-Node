@@ -1,4 +1,3 @@
-import type { Request } from 'express'
 import { EmailAlreadyInUseError, UserNotFoundError } from '../../errors/user.js'
 import {
     checkIfIdIsValid,
@@ -8,26 +7,20 @@ import {
     serverError,
     userNotFoundRespose,
 } from './../helpers/index.js'
-import type { UpdateUserParams, UserIdParams } from '../../types/user.js'
+import type { UpdateUserParams } from '../../types/user.js'
 import { updateUserSchema } from '../../schemas/user.js'
 import { ZodError } from 'zod'
 import type { IUpdateUserUseCase } from '../../useCases/interfaces/user/update-user.js'
 
 export class UpdateUserController {
     constructor(private updateUserUseCase: IUpdateUserUseCase) {}
-    async execute(
-        httpRequest: Request<UserIdParams, unknown, UpdateUserParams>,
-    ) {
+    async execute(userId: string, params: UpdateUserParams) {
         try {
-            const userId = httpRequest.params.userId
-
-            const isIdValid = checkIfIdIsValid(httpRequest.params.userId)
+            const isIdValid = checkIfIdIsValid(userId)
 
             if (!isIdValid) {
                 return invalidIdResponse()
             }
-
-            const params = httpRequest.body
 
             await updateUserSchema.parseAsync(params)
 

@@ -1,5 +1,3 @@
-import type { Request } from 'express'
-
 import {
     checkIfIdIsValid,
     invalidIdResponse,
@@ -7,23 +5,20 @@ import {
     serverError,
     userNotFoundRespose,
 } from '../helpers/index.js'
-import type { UserIdParams } from '../../types/user.js'
 import type { IGetUserByIdUseCase } from '../../useCases/interfaces/user/get-user-by-id.js'
 
 export class GetUserByIdController {
     constructor(private getUserByIdUseCase: IGetUserByIdUseCase) {}
 
-    async execute(httpRequest: Request<UserIdParams>) {
+    async execute(userId: string) {
         try {
-            const isIdValid = checkIfIdIsValid(httpRequest.params.userId)
+            const isIdValid = checkIfIdIsValid(userId)
 
             if (!isIdValid) {
                 return invalidIdResponse()
             }
 
-            const user = await this.getUserByIdUseCase.execute(
-                httpRequest.params.userId,
-            )
+            const user = await this.getUserByIdUseCase.execute(userId)
 
             if (!user) {
                 return userNotFoundRespose()

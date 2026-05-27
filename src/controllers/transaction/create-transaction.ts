@@ -1,25 +1,26 @@
-import type { Request } from 'express'
 import type { CreateTransactionParams } from '../../types/transaction.js'
 import { badRequest, created, serverError } from '../helpers/http.js'
-import { createTransactionSchema } from '../../schemas/transaction.js'
 import { ZodError } from 'zod'
 import type { ICreateTransactionUseCase } from '../../useCases/interfaces/transaction/create-transaction.js'
 import { UserNotFoundError } from '../../errors/user.js'
 import { userNotFoundRespose } from '../helpers/user.js'
+import { createTransactionSchema } from '../../schemas/transaction.js'
 
 export class CreateTransactionController {
     constructor(private createTransactionUseCase: ICreateTransactionUseCase) {}
 
     async execute(
-        httpRequest: Request<unknown, unknown, CreateTransactionParams>,
+        userId: string,
+        params: Omit<CreateTransactionParams, 'user_id'>,
     ) {
         try {
-            const params = await createTransactionSchema.parseAsync(
-                httpRequest.body,
-            )
+            const validatedParams =
+                await createTransactionSchema.parseAsync(params)
 
-            const transaction =
-                await this.createTransactionUseCase.execute(params)
+            const transaction = await this.createTransactionUseCase.execute({
+                ...validatedParams,
+                user_id: userId,
+            })
 
             return created(transaction)
         } catch (error) {

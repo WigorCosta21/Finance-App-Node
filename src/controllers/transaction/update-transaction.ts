@@ -1,43 +1,39 @@
-import type { Request } from 'express'
 import { ZodError } from 'zod'
-import { badRequest, ok, serverError } from '../helpers/http.js'
-import { checkIfIdIsValid, invalidIdResponse } from '../helpers/validation.js'
 import type { UpdateTransactionParams } from '../../types/transaction.js'
-
 import type { IUpdateTransactionUseCase } from '../../useCases/interfaces/transaction/update-transaction.js'
 import { updateTransactionSchema } from '../../schemas/transaction.js'
-import { TransactionNotFoundError } from '../../errors/transaction.js'
-import { transactionNotFoundRespose } from '../helpers/transaction.js'
+import { ForbiddenError, TransactionNotFoundError } from '../../errors/index.js'
 
-export interface ITransactionIdParams {
-    transactionId: string
-}
+import {
+    transactionNotFoundRespose,
+    checkIfIdIsValid,
+    invalidIdResponse,
+    badRequest,
+    forbidden,
+    ok,
+    serverError,
+} from '../helpers/index.js'
 
 export class UpdateTransactionController {
     constructor(private updateTransactionUseCase: IUpdateTransactionUseCase) {}
 
     async execute(
-        httpRequest: Request<
-            ITransactionIdParams,
-            unknown,
-            UpdateTransactionParams
-        >,
+        transactionId: string,
+        userId: string,
+        params: UpdateTransactionParams,
     ) {
         try {
-            const { transactionId } = httpRequest.params
-
             const idIsValid = checkIfIdIsValid(transactionId)
 
             if (!idIsValid) {
                 return invalidIdResponse()
             }
 
-            const params = httpRequest.body
-
             await updateTransactionSchema.parseAsync(params)
 
             const transaction = await this.updateTransactionUseCase.execute(
                 transactionId,
+                userId,
                 params,
             )
 
@@ -59,7 +55,11 @@ export class UpdateTransactionController {
                 return transactionNotFoundRespose()
             }
 
-            console.log(error)
+            if (error instanceof ForbiddenError) {
+                return forbidden()
+            }
+
+            console.error(error)
             return serverError()
         }
     }

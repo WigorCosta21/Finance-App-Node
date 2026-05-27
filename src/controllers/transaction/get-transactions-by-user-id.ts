@@ -1,5 +1,3 @@
-import type { Request } from 'express'
-
 import { UserNotFoundError } from '../../errors/user.js'
 import { ok, serverError } from '../helpers/http.js'
 import { userNotFoundRespose } from '../helpers/user.js'
@@ -9,19 +7,14 @@ import {
     requiredFieldIsMissing,
 } from '../helpers/validation.js'
 import type { IGetTransactionByUserIdUseCase } from '../../useCases/interfaces/transaction/get-transaction-by-user-id.js'
-import type { UserIdQuery } from '../../types/user.js'
 
 export class GetTransactionsByUserIdController {
     constructor(
         private GetTransactionsByUserIdUseCase: IGetTransactionByUserIdUseCase,
     ) {}
 
-    async execute(
-        httpRequest: Request<unknown, unknown, unknown, UserIdQuery>,
-    ) {
+    async execute(userId: string) {
         try {
-            const userId = httpRequest.query.userId
-
             if (!userId) {
                 return requiredFieldIsMissing('userId')
             }

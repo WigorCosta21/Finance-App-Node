@@ -1,51 +1,45 @@
-import jwt from 'jsonwebtoken'
 import request from 'supertest'
 import { app } from '../app.js'
 import { makeUserParams } from '../tests/fixtures/user.js'
 import { faker } from '@faker-js/faker'
 import { TransactionType } from '../../generated/prisma/enums.js'
 
-describe('User Routes E2E Testes', () => {
-    it('POST /api/users should return 201 when user is created', async () => {
-        const user = makeUserParams()
-        const response = await request(app)
-            .post('/api/users')
-            .send({
-                ...user,
-                id: undefined,
-            })
-
-        expect(response.statusCode).toBe(201)
-    })
-
-    it('GET /api/users/ should return 200 when user is found', async () => {
+describe('User Routes E2E Tests', () => {
+    const createUserAndGetToken = async () => {
         const user = makeUserParams()
         const { body: createdUser } = await request(app)
             .post('/api/users')
             .send({ ...user, id: undefined })
 
-        const decoded = jwt.decode(createdUser.tokens.accessToken) as {
-            userId: string
+        return {
+            user: createdUser,
+            token: createdUser.tokens.accessToken,
+            rawPassword: user.password,
         }
+    }
 
-        console.error('createdUser.id (banco):', createdUser.id)
-        console.error('userId no token:       ', decoded.userId)
+    it('POST /api/users should return 201 when user is created', async () => {
+        const user = makeUserParams()
+        const response = await request(app)
+            .post('/api/users')
+            .send({ ...user, id: undefined })
+
+        expect(response.statusCode).toBe(201)
+    })
+
+    it('GET /api/users should return 200 when user is found', async () => {
+        const { user, token } = await createUserAndGetToken()
 
         const response = await request(app)
-            .get(`/api/users`)
-            .set('Authorization', `Bearer ${createdUser.tokens.accessToken}`)
+            .get('/api/users')
+            .set('Authorization', `Bearer ${token}`)
 
         expect(response.statusCode).toBe(200)
+        expect(response.body.id).toBe(user.id)
     })
 
     it('PATCH /api/users should return 200 when user is updated', async () => {
-        const user = makeUserParams()
-        const { body: createdUser } = await request(app)
-            .post('/api/users')
-            .send({
-                ...user,
-                id: undefined,
-            })
+        const { token } = await createUserAndGetToken()
 
         const updateUserParams = {
             first_name: faker.person.firstName(),
@@ -55,8 +49,8 @@ describe('User Routes E2E Testes', () => {
         }
 
         const response = await request(app)
-            .patch(`/api/users`)
-            .set('Authorization', `Bearer ${createdUser.tokens.accessToken}`)
+            .patch('/api/users')
+            .set('Authorization', `Bearer ${token}`)
             .send(updateUserParams)
 
         expect(response.statusCode).toBe(200)
@@ -67,35 +61,23 @@ describe('User Routes E2E Testes', () => {
     })
 
     it('DELETE /api/users should return 200 when user is deleted', async () => {
-        const user = makeUserParams()
-        const { body: createdUser } = await request(app)
-            .post('/api/users')
-            .send({
-                ...user,
-                id: undefined,
-            })
+        const { user, token } = await createUserAndGetToken()
 
         const response = await request(app)
-            .delete(`/api/users`)
-            .set('Authorization', `Bearer ${createdUser.tokens.accessToken}`)
+            .delete('/api/users')
+            .set('Authorization', `Bearer ${token}`)
 
         expect(response.statusCode).toBe(200)
-        expect(response.body.id).toEqual(createdUser.id)
+        expect(response.body.id).toEqual(user.id)
     })
 
-    it('GET /api/users/balance should return 200 and correct balance.', async () => {
-        const user = makeUserParams()
-        const { body: createdUser } = await request(app)
-            .post('/api/users')
-            .send({
-                ...user,
-                id: undefined,
-            })
+    it('GET /api/users/balance should return 200 and correct balance', async () => {
+        const { token } = await createUserAndGetToken()
 
         await request(app)
             .post('/api/transactions')
+            .set('Authorization', `Bearer ${token}`)
             .send({
-                user_id: createdUser.id,
                 name: faker.commerce.productName(),
                 date: faker.date.anytime().toISOString().slice(0, 10),
                 amount: 10000,
@@ -104,8 +86,8 @@ describe('User Routes E2E Testes', () => {
 
         await request(app)
             .post('/api/transactions')
+            .set('Authorization', `Bearer ${token}`)
             .send({
-                user_id: createdUser.id,
                 name: faker.commerce.productName(),
                 date: faker.date.anytime().toISOString().slice(0, 10),
                 amount: 2000,
@@ -114,8 +96,8 @@ describe('User Routes E2E Testes', () => {
 
         await request(app)
             .post('/api/transactions')
+            .set('Authorization', `Bearer ${token}`)
             .send({
-                user_id: createdUser.id,
                 name: faker.commerce.productName(),
                 date: faker.date.anytime().toISOString().slice(0, 10),
                 amount: 2000,
@@ -123,8 +105,8 @@ describe('User Routes E2E Testes', () => {
             })
 
         const response = await request(app)
-            .get(`/api/users/balance`)
-            .set('Authorization', `Bearer ${createdUser.tokens.accessToken}`)
+            .get('/api/users/balance')
+            .set('Authorization', `Bearer ${token}`)
 
         expect(response.statusCode).toBe(200)
         expect(response.body).toEqual({
@@ -139,13 +121,10 @@ describe('User Routes E2E Testes', () => {
         const user = makeUserParams()
         const { body: createdUser } = await request(app)
             .post('/api/users')
-            .send({
-                ...user,
-                id: undefined,
-            })
+            .send({ ...user, id: undefined })
 
         const response = await request(app)
-            .post(`/api/users`)
+            .post('/api/users')
             .send({
                 ...user,
                 id: undefined,
@@ -155,18 +134,12 @@ describe('User Routes E2E Testes', () => {
         expect(response.statusCode).toBe(400)
     })
 
-    it('POST /api/users/login should return 200 and token when user credentials are valid', async () => {
-        const user = makeUserParams()
-        const { body: createdUser } = await request(app)
-            .post('/api/users')
-            .send({
-                ...user,
-                id: undefined,
-            })
+    it('POST /api/users/login should return 200 and tokens when user credentials are valid', async () => {
+        const { user, rawPassword } = await createUserAndGetToken()
 
         const response = await request(app).post('/api/users/login').send({
-            email: createdUser.email,
-            password: user.password,
+            email: user.email,
+            password: rawPassword,
         })
 
         expect(response.statusCode).toBe(200)

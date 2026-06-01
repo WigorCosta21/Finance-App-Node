@@ -1,100 +1,74 @@
-import type { Request } from 'express'
 import { faker } from '@faker-js/faker'
 import { jest } from '@jest/globals'
 import type { Transaction } from '../../types/transaction.js'
 import { GetTransactionsByUserIdController } from './get-transactions-by-user-id.js'
-import type { UserIdQuery } from '../../types/user.js'
 import { UserNotFoundError } from '../../errors/user.js'
 import { makeTransaction } from '../../tests/fixtures/index.js'
 
-describe('GetTransactionByUserIdController', () => {
+describe('GetTransactionsByUserIdController', () => {
     const transaction = makeTransaction()
-    class GetTransactionByUserIdUseCaseStub {
-        async execute(): Promise<Transaction[] | null> {
+
+    class GetTransactionsByUserIdUseCaseStub {
+        async execute(_userId: string): Promise<Transaction[] | null> {
             return [transaction]
         }
     }
 
     const makeSut = () => {
-        const getTransactionByUserIdUseCase =
-            new GetTransactionByUserIdUseCaseStub()
-
-        const sub = new GetTransactionsByUserIdController(
-            getTransactionByUserIdUseCase,
+        const getTransactionsByUserIdUseCase =
+            new GetTransactionsByUserIdUseCaseStub()
+        const sut = new GetTransactionsByUserIdController(
+            getTransactionsByUserIdUseCase,
         )
-
-        return { sub, getTransactionByUserIdUseCase }
+        return { sut, getTransactionsByUserIdUseCase }
     }
 
-    const makeHttpRequest = (userId?: string) => {
-        return {
-            query: {
-                userId: userId ?? faker.string.uuid(),
-            },
-        } as Request<unknown, unknown, unknown, UserIdQuery>
-    }
+    it('should return 200 when finding transactions by user id successfully', async () => {
+        const { sut } = makeSut()
 
-    const makeInvalidHttpRequest = (query: unknown) => {
-        return {
-            query,
-        } as unknown as Request<unknown, unknown, unknown, UserIdQuery>
-    }
-
-    it('should return 200 when finding transaction by user id successfully', async () => {
-        const { sub } = makeSut()
-
-        const response = await sub.execute(makeHttpRequest())
+        const response = await sut.execute(faker.string.uuid())
 
         expect(response.statusCode).toBe(200)
     })
 
-    it('should return 400 when missing userId params', async () => {
-        const { sub } = makeSut()
+    it('should return 400 when userId is invalid', async () => {
+        const { sut } = makeSut()
 
-        const response = await sub.execute(
-            makeInvalidHttpRequest({
-                userId: undefined,
-            }),
-        )
+        const response = await sut.execute('invalid_id')
 
         expect(response.statusCode).toBe(400)
     })
 
-    it('should return 404 when GetUserByIdUseCase throws UserNotFoundError', async () => {
-        const { sub, getTransactionByUserIdUseCase } = makeSut()
-
+    it('should return 404 when GetTransactionsByUserIdUseCase throws UserNotFoundError', async () => {
+        const { sut, getTransactionsByUserIdUseCase } = makeSut()
         jest.spyOn(
-            getTransactionByUserIdUseCase,
+            getTransactionsByUserIdUseCase,
             'execute',
         ).mockRejectedValueOnce(new UserNotFoundError())
 
-        const response = await sub.execute(makeHttpRequest())
+        const response = await sut.execute(faker.string.uuid())
 
         expect(response.statusCode).toBe(404)
     })
 
-    it('should return 500 when GetUserByIdUseCase throws generic errors', async () => {
-        const { sub, getTransactionByUserIdUseCase } = makeSut()
-
+    it('should return 500 when GetTransactionsByUserIdUseCase throws generic error', async () => {
+        const { sut, getTransactionsByUserIdUseCase } = makeSut()
         jest.spyOn(
-            getTransactionByUserIdUseCase,
+            getTransactionsByUserIdUseCase,
             'execute',
         ).mockRejectedValueOnce(new Error())
 
-        const response = await sub.execute(makeHttpRequest())
+        const response = await sut.execute(faker.string.uuid())
 
         expect(response.statusCode).toBe(500)
     })
 
-    it('should call GetUserByIdUser with correct params', async () => {
-        const { sub, getTransactionByUserIdUseCase } = makeSut()
-
-        const executeSpy = jest.spyOn(getTransactionByUserIdUseCase, 'execute')
+    it('should call GetTransactionsByUserIdUseCase with correct params', async () => {
+        const { sut, getTransactionsByUserIdUseCase } = makeSut()
+        const executeSpy = jest.spyOn(getTransactionsByUserIdUseCase, 'execute')
 
         const userId = faker.string.uuid()
-        const httpRequest = makeHttpRequest(userId)
-
-        await sub.execute(httpRequest)
+        await sut.execute(userId)
 
         expect(executeSpy).toHaveBeenCalledWith(userId)
     })

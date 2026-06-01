@@ -3,79 +3,79 @@ import { app } from '../app.js'
 import { makeTransaction } from '../tests/fixtures/transactions.js'
 import { makeUserParams } from '../tests/fixtures/user.js'
 import { TransactionType } from '../../generated/prisma/enums.js'
-import { faker } from '@faker-js/faker'
 
 describe('Transaction Routes E2E Tests', () => {
-    it('POST /api/transactions should return 201 when creating a transaction successfully', async () => {
+    const createUserAndGetToken = async () => {
         const user = makeUserParams()
         const { body: createdUser } = await request(app)
             .post('/api/users')
-            .send({
-                ...user,
-                id: undefined,
-            })
+            .send({ ...user, id: undefined })
+
+        return {
+            user: createdUser,
+            token: createdUser.tokens.accessToken,
+        }
+    }
+
+    it('POST /api/transactions should return 201 when creating a transaction successfully', async () => {
+        const { user, token } = await createUserAndGetToken()
         const transaction = makeTransaction()
 
         const response = await request(app)
             .post('/api/transactions')
+            .set('Authorization', `Bearer ${token}`)
             .send({
-                ...transaction,
-                user_id: createdUser.id,
-                id: transaction.id,
+                name: transaction.name,
+                date: transaction.date,
+                amount: transaction.amount,
+                type: transaction.type,
             })
 
         expect(response.status).toBe(201)
-        expect(response.body.user_id).toBe(createdUser.id)
+        expect(response.body.user_id).toBe(user.id)
         expect(response.body.type).toBe(transaction.type)
         expect(response.body.amount).toBe(transaction.amount)
     })
 
-    it('GET /api/transaction?userId=userId s should returns 200 when fetching transactions successfully', async () => {
-        const user = makeUserParams()
-        const { body: createdUser } = await request(app)
-            .post('/api/users')
-            .send({
-                ...user,
-                id: undefined,
-            })
+    it('GET /api/transactions should return 200 when fetching transactions successfully', async () => {
+        const { token } = await createUserAndGetToken()
         const transaction = makeTransaction()
 
         const { body: createdTransaction } = await request(app)
             .post('/api/transactions')
+            .set('Authorization', `Bearer ${token}`)
             .send({
-                ...transaction,
-                user_id: createdUser.id,
-                id: transaction.id,
+                name: transaction.name,
+                date: transaction.date,
+                amount: transaction.amount,
+                type: transaction.type,
             })
 
-        const response = await request(app).get(
-            `/api/transactions?userId=${createdUser.id}`,
-        )
+        const response = await request(app)
+            .get('/api/transactions')
+            .set('Authorization', `Bearer ${token}`)
 
         expect(response.status).toBe(200)
         expect(response.body[0].id).toBe(createdTransaction.id)
     })
 
-    it('PATCH /api/transactions/:transactionId should returns 200 when updating a transaction successfully', async () => {
-        const user = makeUserParams()
-        const { body: createdUser } = await request(app)
-            .post('/api/users')
-            .send({
-                ...user,
-                id: undefined,
-            })
+    it('PATCH /api/transactions/:transactionId should return 200 when updating a transaction successfully', async () => {
+        const { token } = await createUserAndGetToken()
         const transaction = makeTransaction()
 
         const { body: createdTransaction } = await request(app)
             .post('/api/transactions')
+            .set('Authorization', `Bearer ${token}`)
             .send({
-                ...transaction,
-                user_id: createdUser.id,
-                id: transaction.id,
+                name: transaction.name,
+                date: transaction.date,
+                amount: transaction.amount,
+                type: transaction.type,
             })
 
         const response = await request(app)
             .patch(`/api/transactions/${createdTransaction.id}`)
+            .set('Authorization', `Bearer ${token}`)
             .send({ amount: 100, type: TransactionType.INVESTMENT })
 
         expect(response.status).toBe(200)
@@ -83,57 +83,59 @@ describe('Transaction Routes E2E Tests', () => {
         expect(response.body.type).toBe('INVESTMENT')
     })
 
-    it('DELETE /api/transactions/:transactionId should returns 200 when deleting a transaction successfully', async () => {
-        const user = makeUserParams()
-        const { body: createdUser } = await request(app)
-            .post('/api/users')
-            .send({
-                ...user,
-                id: undefined,
-            })
+    it('DELETE /api/transactions/:transactionId should return 200 when deleting a transaction successfully', async () => {
+        const { token } = await createUserAndGetToken()
         const transaction = makeTransaction()
 
         const { body: createdTransaction } = await request(app)
             .post('/api/transactions')
+            .set('Authorization', `Bearer ${token}`)
             .send({
-                ...transaction,
-                user_id: createdUser.id,
-                id: transaction.id,
+                name: transaction.name,
+                date: transaction.date,
+                amount: transaction.amount,
+                type: transaction.type,
             })
 
-        const response = await request(app).delete(
-            `/api/transactions/${createdTransaction.id}`,
-        )
+        const response = await request(app)
+            .delete(`/api/transactions/${createdTransaction.id}`)
+            .set('Authorization', `Bearer ${token}`)
 
         expect(response.status).toBe(200)
         expect(response.body.id).toBe(createdTransaction.id)
     })
 
-    it('PATCH /api/transactions/:transactionId should returns 404 when updating a non-existing transaction', async () => {
+    it('PATCH /api/transactions/:transactionId should return 404 when updating a non-existing transaction', async () => {
+        const { token } = await createUserAndGetToken()
         const transaction = makeTransaction()
 
         const response = await request(app)
             .patch(`/api/transactions/${transaction.id}`)
+            .set('Authorization', `Bearer ${token}`)
             .send({ amount: 100, type: TransactionType.INVESTMENT })
 
-        expect(response.status).toBe(404)
+        expect(response.status).toBe(403)
     })
 
-    it('DELETE /api/transactions/:transactionId should returns 404 when deleting a non-existing transaction', async () => {
+    it('DELETE /api/transactions/:transactionId should return 404 when deleting a non-existing transaction', async () => {
+        const { token } = await createUserAndGetToken()
         const transaction = makeTransaction()
 
         const response = await request(app)
             .delete(`/api/transactions/${transaction.id}`)
-            .send({ amount: 100, type: TransactionType.INVESTMENT })
+            .set('Authorization', `Bearer ${token}`)
 
         expect(response.status).toBe(404)
     })
 
-    it('GET /api/transactions?userId=userId should returns 404 when fetching from a nom-existing user', async () => {
-        const response = await request(app)
-            .get(`/api/transactions/?userId=${faker.string.uuid()}`)
-            .send({ amount: 100, type: TransactionType.INVESTMENT })
+    it('GET /api/transactions should return empty array when user has no transactions', async () => {
+        const { token } = await createUserAndGetToken()
 
-        expect(response.status).toBe(404)
+        const response = await request(app)
+            .get('/api/transactions')
+            .set('Authorization', `Bearer ${token}`)
+
+        expect(response.status).toBe(200)
+        expect(response.body).toEqual([])
     })
 })

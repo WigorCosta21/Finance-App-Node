@@ -1,4 +1,5 @@
 import { z } from 'zod'
+import type { ParamsDictionary } from 'express-serve-static-core'
 import type { createTransactionSchema } from '../schemas/transaction.js'
 
 type TransactionType = 'EARNING' | 'EXPENSE' | 'INVESTMENT'
@@ -16,10 +17,9 @@ export type CreateTransactionParams = Omit<Transaction, 'id'>
 export type CreateTransactionRepositoryParams = Transaction
 export type CreateTransactionBody = z.input<typeof createTransactionSchema>
 
-export interface TransactionIdParams {
+export type TransactionIdParams = ParamsDictionary & {
     transactionId: string
 }
-
 export interface UserIdParams {
     userId: string
 }

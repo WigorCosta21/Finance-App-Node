@@ -20,8 +20,6 @@ export const auth: RequestHandler = (request, response, next) => {
 
         request.userId = decodedToken.userId
 
-        console.log('auth middleware ir running')
-
         next()
     } catch (error) {
         console.error(error)

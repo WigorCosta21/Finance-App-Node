@@ -1,63 +1,76 @@
 import { Router, type Request, type Response } from 'express'
-import type { UserIdQuery } from '../types/user.js'
 import {
     makeCreateTransactionController,
     makeDeleteTransactionController,
     makeGetTransactiosByUserIdController,
     makeUpdateTransactionController,
 } from '../factories/controllers/transaction.js'
-import type { ITransactionIdParams } from '../controllers/index.js'
-import type {
-    TransactionIdParams,
-    UpdateTransactionParams,
-} from '../types/transaction.js'
+import type { TransactionIdParams } from '../types/transaction.js'
+import { auth } from '../middlewares/auth.js'
+import { unauthorized } from '../controllers/helpers/index.js'
 
 export const transactionsRoutes = Router()
 
 transactionsRoutes.get(
     '/',
-    async (
-        request: Request<unknown, unknown, unknown, UserIdQuery>,
-        response: Response,
-    ) => {
-        const getTransactionsByUserIdController =
-            makeGetTransactiosByUserIdController()
+    auth,
+    async (request: Request, response: Response) => {
+        if (!request.userId) {
+            const { statusCode, body } = unauthorized()
+            return response.status(statusCode).json(body)
+        }
 
-        const { statusCode, body } =
-            await getTransactionsByUserIdController.execute(request)
+        const controller = makeGetTransactiosByUserIdController()
+        const { statusCode, body } = await controller.execute(request.userId)
 
         return response.status(statusCode).json(body)
     },
 )
 
-transactionsRoutes.post('/', async (request: Request, response: Response) => {
-    const createTransactionController = makeCreateTransactionController()
+// rota
+transactionsRoutes.post(
+    '/',
+    auth,
+    async (request: Request, response: Response) => {
+        if (!request.userId) {
+            const { statusCode, body } = unauthorized()
+            return response.status(statusCode).json(body)
+        }
 
-    const { statusCode, body } =
-        await createTransactionController.execute(request)
-
-    response.status(statusCode).json(body)
-})
+        const createTransactionController = makeCreateTransactionController()
+        const { statusCode, body } = await createTransactionController.execute(
+            request.userId,
+            request.body,
+        )
+        response.status(statusCode).json(body)
+    },
+)
 
 transactionsRoutes.patch(
     '/:transactionId',
-    async (
-        request: Request<
-            ITransactionIdParams,
-            unknown,
-            UpdateTransactionParams
-        >,
-        response: Response,
-    ) => {
-        const updateTransactionController = makeUpdateTransactionController()
+    auth,
+    async (request: Request<TransactionIdParams>, response: Response) => {
+        console.error('[PATCH] transactionId:', request.params.transactionId)
+        console.error('[PATCH] userId from token:', request.userId)
+        console.error('[PATCH] body:', request.body)
 
-        const { statusCode, body } =
-            await updateTransactionController.execute(request)
+        if (!request.userId) {
+            const { statusCode, body } = unauthorized()
+            return response.status(statusCode).json(body)
+        }
+
+        const updateTransactionController = makeUpdateTransactionController()
+        const { statusCode, body } = await updateTransactionController.execute(
+            request.params.transactionId,
+            request.userId,
+            request.body,
+        )
+
+        console.error('[PATCH] returning:', statusCode, body)
 
         return response.status(statusCode).json(body)
     },
 )
-
 transactionsRoutes.delete(
     '/:transactionId',
     async (request: Request<TransactionIdParams>, response: Response) => {

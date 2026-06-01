@@ -14,6 +14,15 @@ export const unauthorized = () => {
     }
 }
 
+export const forbidden = () => {
+    return {
+        statusCode: 403,
+        body: {
+            message: 'Forbidden',
+        },
+    }
+}
+
 export const created = (body: unknown) => {
     return {
         statusCode: 201,

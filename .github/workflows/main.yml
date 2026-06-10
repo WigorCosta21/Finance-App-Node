@@ -51,6 +51,8 @@ jobs:
               env:
                   NODE_OPTIONS: --experimental-vm-modules
                   DATABASE_URL: postgresql://postgres:postgres@localhost:5433/finance_app_test
+                  JWT_ACCESS_TOKEN_SECRET: test_access_token_secret_for_ci_only
+                  JWT_REFRESH_TOKEN_SECRET: test_refresh_token_secret_for_ci_only
 
     migrate:
         runs-on: ubuntu-latest
@@ -90,3 +92,6 @@ jobs:
             - name: Deploy to production
               run: |
                   curl "${{ secrets.RENDER_DEPLOY_HOOK_URL }}"
+              env:
+                  JWT_ACCESS_TOKEN_SECRET: ${{ secrets.JWT_ACCESS_TOKEN_SECRET }}
+                  JWT_REFRESH_TOKEN_SECRET: ${{ secrets.JWT_REFRESH_TOKEN_SECRET }}

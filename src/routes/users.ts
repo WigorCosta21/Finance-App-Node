@@ -36,13 +36,19 @@ usersRoutes.get(
     auth,
     async (request: Request<UserIdParams>, response: Response) => {
         if (!request.userId) {
-            return unauthorized()
+            const { statusCode, body } = unauthorized()
+
+            return response.status(statusCode).json(body)
         }
 
         const getUserBalanceController = makeGetUserBalanceController()
 
         const { statusCode, body } = await getUserBalanceController.execute(
             request.userId,
+            {
+                from: request.query.from as string,
+                to: request.query.to as string,
+            },
         )
 
         return response.status(statusCode).json(body)

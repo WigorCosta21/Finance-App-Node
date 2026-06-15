@@ -2,11 +2,15 @@ import { prisma } from '../../../../prisma/prisma.js'
 import type { IGetUserBalanceRepository } from '../../interfaces/user/get-user-balance.js'
 
 export class PostgresGetUserBalanceRepository implements IGetUserBalanceRepository {
-    async execute(userId: string) {
+    async execute(userId: string, from: string, to: string) {
         const result = await prisma.transaction.groupBy({
             by: ['type'],
             where: {
                 user_id: userId,
+                date: {
+                    gte: new Date(from),
+                    lte: new Date(to),
+                },
             },
             _sum: {
                 amount: true,

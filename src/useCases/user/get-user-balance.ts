@@ -9,14 +9,18 @@ export class GetUserBalanceUseCase implements IGetUserBalanceUseCase {
         private getUserByIdRepository: IGetUserByIdRepository,
     ) {}
 
-    async execute(userId: string) {
+    async execute(userId: string, from: string, to: string) {
         const user = await this.getUserByIdRepository.execute(userId)
 
         if (!user) {
             throw new UserNotFoundError()
         }
 
-        const balance = await this.getUserBalanceRepository.execute(userId)
+        const balance = await this.getUserBalanceRepository.execute(
+            userId,
+            from,
+            to,
+        )
 
         return balance
     }

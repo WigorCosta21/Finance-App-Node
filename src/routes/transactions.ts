@@ -21,7 +21,10 @@ transactionsRoutes.get(
         }
 
         const controller = makeGetTransactiosByUserIdController()
-        const { statusCode, body } = await controller.execute(request.userId)
+        const { statusCode, body } = await controller.execute(request.userId, {
+            from: request.query.from as string,
+            to: request.query.to as string,
+        })
 
         return response.status(statusCode).json(body)
     },

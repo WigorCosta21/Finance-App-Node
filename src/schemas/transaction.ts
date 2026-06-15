@@ -25,3 +25,13 @@ export const createTransactionSchema = z.object({
 export const updateTransactionSchema = createTransactionSchema
     .partial()
     .strict()
+
+export const getTransactionsByUserIdQuerySchema = z
+    .object({
+        from: z.iso.date('from must be a valid date in YYYY-MM-DD format'),
+        to: z.iso.date('to must be a valid date in YYYY-MM-DD format'),
+    })
+    .refine((data) => new Date(data.from) <= new Date(data.to), {
+        message: 'from must be before or equal to to',
+        path: ['from'],
+    })

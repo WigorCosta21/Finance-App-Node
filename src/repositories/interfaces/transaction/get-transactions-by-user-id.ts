@@ -1,5 +1,5 @@
 import type { Transaction } from '../../../types/transaction.js'
 
-export interface IGetTransactionByUserIdRepository {
-    execute(userId: string): Promise<Transaction[]>
+export interface IGetTransactionsByUserIdRepository {
+    execute(userId: string, from: string, to: string): Promise<Transaction[]>
 }

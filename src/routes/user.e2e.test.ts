@@ -73,13 +73,16 @@ describe('User Routes E2E Tests', () => {
 
     it('GET /api/users/balance should return 200 and correct balance', async () => {
         const { token } = await createUserAndGetToken()
+        const from = '2020-01-01'
+        const to = '2030-12-31'
+        const dateInRange = '2025-06-15'
 
         await request(app)
             .post('/api/transactions')
             .set('Authorization', `Bearer ${token}`)
             .send({
                 name: faker.commerce.productName(),
-                date: faker.date.anytime().toISOString().slice(0, 10),
+                date: dateInRange,
                 amount: 10000,
                 type: TransactionType.EARNING,
             })
@@ -89,7 +92,7 @@ describe('User Routes E2E Tests', () => {
             .set('Authorization', `Bearer ${token}`)
             .send({
                 name: faker.commerce.productName(),
-                date: faker.date.anytime().toISOString().slice(0, 10),
+                date: dateInRange,
                 amount: 2000,
                 type: TransactionType.EXPENSE,
             })
@@ -99,13 +102,13 @@ describe('User Routes E2E Tests', () => {
             .set('Authorization', `Bearer ${token}`)
             .send({
                 name: faker.commerce.productName(),
-                date: faker.date.anytime().toISOString().slice(0, 10),
+                date: dateInRange,
                 amount: 2000,
                 type: TransactionType.INVESTMENT,
             })
 
         const response = await request(app)
-            .get('/api/users/balance')
+            .get(`/api/users/balance?from=${from}&to=${to}`)
             .set('Authorization', `Bearer ${token}`)
 
         expect(response.statusCode).toBe(200)

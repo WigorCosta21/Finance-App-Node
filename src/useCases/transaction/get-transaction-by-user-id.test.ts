@@ -4,105 +4,101 @@ import { GetTransactionsByUserIdUseCase } from './get-transactions-by-user-id.js
 import { UserNotFoundError } from '../../errors/user.js'
 import { makeUser } from '../../tests/fixtures/index.js'
 
-describe('GetTransactionByUserIdUseCase', () => {
+describe('GetTransactionsByUserIdUseCase', () => {
     const user = makeUser()
+    const from = '2020-01-01'
+    const to = '2030-12-31'
 
-    class GetTransactionByIdUserIdRepositoryStub {
-        async execute() {
+    class GetTransactionsByUserIdRepositoryStub {
+        async execute(_userId: string, _from: string, _to: string) {
             return []
         }
     }
 
-    class GetUsetByIdRepositoryStub {
+    class GetUserByIdRepositoryStub {
         async execute(): Promise<PublicUser | null> {
             return user
         }
     }
 
     const makeSut = () => {
-        const getTransactionByIdUserIdRepository =
-            new GetTransactionByIdUserIdRepositoryStub()
-        const getUsetByIdRepository = new GetUsetByIdRepositoryStub()
+        const getTransactionsByUserIdRepository =
+            new GetTransactionsByUserIdRepositoryStub()
+        const getUserByIdRepository = new GetUserByIdRepositoryStub()
 
         const sut = new GetTransactionsByUserIdUseCase(
-            getTransactionByIdUserIdRepository,
-            getUsetByIdRepository,
+            getTransactionsByUserIdRepository,
+            getUserByIdRepository,
         )
 
         return {
             sut,
-            getTransactionByIdUserIdRepository,
-            getUsetByIdRepository,
+            getTransactionsByUserIdRepository,
+            getUserByIdRepository,
         }
     }
 
-    it('shout GetTransactionByUserId if successfully', async () => {
+    it('should get transactions successfully', async () => {
         const { sut } = makeSut()
 
-        const result = await sut.execute(user.id)
+        const result = await sut.execute(user.id, from, to)
 
         expect(result).toEqual([])
     })
 
-    it('shout throw UserNotFoundError if user does not exist', async () => {
-        const { sut, getUsetByIdRepository } = makeSut()
+    it('should throw UserNotFoundError if user does not exist', async () => {
+        const { sut, getUserByIdRepository } = makeSut()
 
-        jest.spyOn(getUsetByIdRepository, 'execute').mockResolvedValueOnce(null)
+        jest.spyOn(getUserByIdRepository, 'execute').mockResolvedValueOnce(null)
 
-        const promise = sut.execute(user.id)
+        const promise = sut.execute(user.id, from, to)
 
         await expect(promise).rejects.toThrow(new UserNotFoundError())
     })
 
-    it('shout call GetUserByIdRepository with correct params', async () => {
-        const { sut, getUsetByIdRepository } = makeSut()
-
+    it('should call GetUserByIdRepository with correct params', async () => {
+        const { sut, getUserByIdRepository } = makeSut()
         const getUserByIdRepositorySpy = jest.spyOn(
-            getUsetByIdRepository,
+            getUserByIdRepository,
             'execute',
         )
 
-        await sut.execute(user.id)
+        await sut.execute(user.id, from, to)
 
         expect(getUserByIdRepositorySpy).toHaveBeenCalledWith(user.id)
     })
 
-    it('shout call GetTransactionByIdUserIdRepository with correct params', async () => {
-        const { sut, getTransactionByIdUserIdRepository } = makeSut()
-
-        const getTransactionByIdUserIdRepositorySpy = jest.spyOn(
-            getTransactionByIdUserIdRepository,
+    it('should call GetTransactionsByUserIdRepository with correct params', async () => {
+        const { sut, getTransactionsByUserIdRepository } = makeSut()
+        const repositorySpy = jest.spyOn(
+            getTransactionsByUserIdRepository,
             'execute',
         )
 
-        await sut.execute(user.id)
+        await sut.execute(user.id, from, to)
 
-        expect(getTransactionByIdUserIdRepositorySpy).toHaveBeenCalledWith(
-            user.id,
-        )
+        expect(repositorySpy).toHaveBeenCalledWith(user.id, from, to)
     })
 
-    it('shout throw if GetUserByIdRepository throws', async () => {
-        const { sut, getUsetByIdRepository } = makeSut()
-
-        jest.spyOn(getUsetByIdRepository, 'execute').mockRejectedValueOnce(
+    it('should throw if GetUserByIdRepository throws', async () => {
+        const { sut, getUserByIdRepository } = makeSut()
+        jest.spyOn(getUserByIdRepository, 'execute').mockRejectedValueOnce(
             new Error(),
         )
 
-        const promise = sut.execute(user.id)
+        const promise = sut.execute(user.id, from, to)
 
         await expect(promise).rejects.toThrow()
     })
 
-    it('shout throw if GetTransactionByUserIdRepository throws', async () => {
-        const { sut, getTransactionByIdUserIdRepository } = makeSut()
-
+    it('should throw if GetTransactionsByUserIdRepository throws', async () => {
+        const { sut, getTransactionsByUserIdRepository } = makeSut()
         jest.spyOn(
-            getTransactionByIdUserIdRepository,
+            getTransactionsByUserIdRepository,
             'execute',
         ).mockRejectedValueOnce(new Error())
 
-        const promise = sut.execute(user.id)
+        const promise = sut.execute(user.id, from, to)
 
         await expect(promise).rejects.toThrow()
     })

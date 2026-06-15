@@ -52,7 +52,7 @@ describe('Transaction Routes E2E Tests', () => {
             })
 
         const response = await request(app)
-            .get('/api/transactions')
+            .get('/api/transactions?from=2020-01-01&to=2030-12-31')
             .set('Authorization', `Bearer ${token}`)
 
         expect(response.status).toBe(200)
@@ -132,7 +132,7 @@ describe('Transaction Routes E2E Tests', () => {
         const { token } = await createUserAndGetToken()
 
         const response = await request(app)
-            .get('/api/transactions')
+            .get('/api/transactions?from=2020-01-01&to=2030-12-31')
             .set('Authorization', `Bearer ${token}`)
 
         expect(response.status).toBe(200)

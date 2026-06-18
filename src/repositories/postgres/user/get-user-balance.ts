@@ -32,12 +32,32 @@ export class PostgresGetUserBalanceRepository implements IGetUserBalanceReposito
                 .find((item) => item.type === 'INVESTMENT')
                 ?._sum.amount?.toNumber() ?? 0
 
+        const total = total_earnings + total_expenses + total_investments
+
         const balance = total_earnings - total_expenses - total_investments
+
+        const earningsPercentage =
+            total === 0
+                ? 0
+                : Number(((total_earnings / total) * 100).toFixed(2))
+
+        const expensesPercentage =
+            total === 0
+                ? 0
+                : Number(((total_expenses / total) * 100).toFixed(2))
+
+        const investmentsPercentage =
+            total === 0
+                ? 0
+                : Number(((total_investments / total) * 100).toFixed(2))
 
         return {
             earnings: total_earnings,
             expenses: total_expenses,
             investments: total_investments,
+            earningsPercentage,
+            expensesPercentage,
+            investmentsPercentage,
             balance,
         }
     }

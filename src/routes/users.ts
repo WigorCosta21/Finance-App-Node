@@ -15,7 +15,7 @@ import { unauthorized } from '../controllers/helpers/index.js'
 
 export const usersRoutes = Router()
 
-usersRoutes.get('/', auth, async (request: Request, response: Response) => {
+usersRoutes.get('/me', auth, async (request: Request, response: Response) => {
     if (!request.userId) {
         const { statusCode, body } = unauthorized()
 
@@ -32,7 +32,7 @@ usersRoutes.get('/', auth, async (request: Request, response: Response) => {
 })
 
 usersRoutes.get(
-    '/balance',
+    '/me/balance',
     auth,
     async (request: Request<UserIdParams>, response: Response) => {
         if (!request.userId) {
@@ -64,7 +64,7 @@ usersRoutes.post('/', async (request: Request, response: Response) => {
 })
 
 usersRoutes.patch(
-    '/',
+    '/me',
     auth,
     async (request: Request<UserIdParams>, response: Response) => {
         if (!request.userId) {
@@ -85,7 +85,7 @@ usersRoutes.patch(
 )
 
 usersRoutes.delete(
-    '/',
+    '/me',
     auth,
     async (request: Request<UserIdParams>, response: Response) => {
         if (!request.userId) {

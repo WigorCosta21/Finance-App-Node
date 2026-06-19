@@ -15,35 +15,6 @@
     },
     "paths": {
         "/api/users": {
-            "get": {
-                "summary": "Get authenticated user",
-                "tags": ["User"],
-                "responses": {
-                    "200": {
-                        "description": "User retrieved successfully",
-                        "schema": {
-                            "$ref": "#/definitions/UserResponse"
-                        }
-                    },
-                    "404": {
-                        "description": "User not found",
-                        "schema": {
-                            "$ref": "#/definitions/UserNotFoundResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal server error",
-                        "schema": {
-                            "$ref": "#/definitions/InternalServerErrorResponse"
-                        }
-                    }
-                },
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ]
-            },
             "post": {
                 "summary": "Create a new user",
                 "tags": ["User"],
@@ -77,6 +48,37 @@
                         }
                     }
                 }
+            }
+        },
+        "/api/users/me": {
+            "get": {
+                "summary": "Get authenticated user",
+                "tags": ["User"],
+                "responses": {
+                    "200": {
+                        "description": "User retrieved successfully",
+                        "schema": {
+                            "$ref": "#/definitions/UserResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "User not found",
+                        "schema": {
+                            "$ref": "#/definitions/UserNotFoundResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/InternalServerErrorResponse"
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ]
             },
             "patch": {
                 "summary": "Update authenticated user",
@@ -231,7 +233,7 @@
                 }
             }
         },
-        "/api/users/balance": {
+        "/api/users/me/balance": {
             "get": {
                 "summary": "Get authenticated user balance",
                 "tags": ["User"],

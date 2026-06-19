@@ -12,7 +12,7 @@ import { unauthorized } from '../controllers/helpers/index.js'
 export const transactionsRoutes = Router()
 
 transactionsRoutes.get(
-    '/',
+    '/me',
     auth,
     async (request: Request, response: Response) => {
         if (!request.userId) {
@@ -32,7 +32,7 @@ transactionsRoutes.get(
 
 // rota
 transactionsRoutes.post(
-    '/',
+    '/me',
     auth,
     async (request: Request, response: Response) => {
         if (!request.userId) {
@@ -50,7 +50,7 @@ transactionsRoutes.post(
 )
 
 transactionsRoutes.patch(
-    '/:transactionId',
+    '/:transactionId/me',
     auth,
     async (request: Request<TransactionIdParams>, response: Response) => {
         console.error('[PATCH] transactionId:', request.params.transactionId)
@@ -75,7 +75,7 @@ transactionsRoutes.patch(
     },
 )
 transactionsRoutes.delete(
-    '/:transactionId',
+    '/:transactionId/me',
     async (request: Request<TransactionIdParams>, response: Response) => {
         const deleteTransactionController = makeDeleteTransactionController()
 

@@ -76,12 +76,20 @@ transactionsRoutes.patch(
 )
 transactionsRoutes.delete(
     '/:transactionId/me',
+    auth,
     async (request: Request<TransactionIdParams>, response: Response) => {
+        if (!request.userId) {
+            const { statusCode, body } = unauthorized()
+
+            return response.status(statusCode).json(body)
+        }
+
         const deleteTransactionController = makeDeleteTransactionController()
 
-        const { statusCode, body } =
-            await deleteTransactionController.execute(request)
-
+        const { statusCode, body } = await deleteTransactionController.execute(
+            request.params.transactionId,
+            request.userId,
+        )
         return response.status(statusCode).json(body)
     },
 )

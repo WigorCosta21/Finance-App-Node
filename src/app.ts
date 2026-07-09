@@ -7,8 +7,16 @@ import swaggerUi from 'swagger-ui-express'
 import fs from 'fs'
 import path from 'path'
 import { fileURLToPath } from 'url'
+import cors from 'cors'
 
 export const app = express()
+
+app.use(
+    cors({
+        origin: process.env.FRONTEND_URL,
+        credentials: true,
+    }),
+)
 
 app.use(express.json())
 
